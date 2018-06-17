@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="转眼又是一年，想来又老了一岁，看到昨天空间刷的18岁，也确实值得缅怀一下？
+那一年我高三。18岁嘛，少年当头，青春正好，然后我在高三。也就是那一年，跨过了人生中第二道门槛(?),高考。
+听高中老师忽,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">加了限定条件的Helloworld</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div>
+        <h1 class="title">加了限定条件的Helloworld</h1>
+        <div class="stuff">
+            <span>十月 05, 2017</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/2017/">2017</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Blogs/">Blogs</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>今年水群的时候无意中发现CNSS的招新题目，关于加了限定条件的Helloworld的写法。</p>
+<p>*1.不用 “ ” 输出Helloworld。</p>
+<p>*2.不用 ； 输出Helloworld。</p>
+<p>*3.不用 # 输出Helloworld。</p>
+<p>*4.不用各种括号输出Helloworld。</p>
+<a id="more"></a>
+<h1 id="HelloWorld"><a href="#HelloWorld" class="headerlink" title="HelloWorld"></a>HelloWorld</h1><h2 id="不用-“-”-输出Helloworld"><a href="#不用-“-”-输出Helloworld" class="headerlink" title="不用 “ ” 输出Helloworld"></a>不用 “ ” 输出Helloworld</h2><p>第一种比较简单，直接把“HelloWorld”写成ascii码用字符输出，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	char HelloWorld[] = &#123;72,101,108,108,111,87,111,114,108,100,33&#125;;</span><br><span class="line">	puts(HelloWorld);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p><img src="/img/HelloWorld/1.png" alt=""></p>
+<h2 id="不用-；-输出Helloworld"><a href="#不用-；-输出Helloworld" class="headerlink" title="不用 ； 输出Helloworld"></a>不用 ； 输出Helloworld</h2><p>第二种，用<strong>if</strong>来规避’;’，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	if (puts(&quot;Helloworld&quot;))&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果：<br><img src="/img/HelloWorld/2.png" alt=""></p>
+<h2 id="不用-输出Helloworld"><a href="#不用-输出Helloworld" class="headerlink" title="不用 # 输出Helloworld"></a>不用 # 输出Helloworld</h2><p>我自行声明了<strong>printf</strong>函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">extern int printf (const char* format, ...);</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">  printf(&quot;HelloWorld!\n&quot;);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果：<br><img src="/img/HelloWorld/3.png" alt=""></p>
+<h2 id="不用各种括号输出Helloworld"><a href="#不用各种括号输出Helloworld" class="headerlink" title="不用各种括号输出Helloworld"></a>不用各种括号输出Helloworld</h2><p>这第四问算超纲了吧，shellcode。</p>
+<p>一个文件的起始不是<strong>main</strong>函数，而是<strong>_start</strong>函数</p>
+<p>在一个<em>elf</em>文件中，托入<strong>ida</strong>分析，可以看到：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">.text:08048310                 public _start</span><br><span class="line">.text:08048310 _start          proc near</span><br><span class="line">.text:08048310                 xor     ebp, ebp</span><br><span class="line">.text:08048312                 pop     esi</span><br><span class="line">.text:08048313                 mov     ecx, esp</span><br><span class="line">.text:08048315                 and     esp, 0FFFFFFF0h</span><br><span class="line">.text:08048318                 push    eax</span><br><span class="line">.text:08048319                 push    esp</span><br><span class="line">.text:0804831A                 push    edx</span><br><span class="line">.text:0804831B                 push    offset __libc_csu_fini</span><br><span class="line">.text:08048320                 push    offset __libc_csu_init</span><br><span class="line">.text:08048325                 push    ecx</span><br><span class="line">.text:08048326                 push    esi</span><br><span class="line">.text:08048327                 push    offset main</span><br><span class="line">.text:0804832C                 call    ___libc_start_main</span><br><span class="line">.text:08048331                 hlt</span><br><span class="line">.text:08048331 _start          endp</span><br></pre></td></tr></table></figure></p>
+<p>在<strong>.text:08048327</strong>处，将<strong>main</strong>作为参数入栈，然后执行，即跳转到<strong>main</strong>函数的位置，执行<strong>main</strong>中的语句。所以，我们可以直接在<strong>main</strong>中构造数据，当<strong>main</strong>函数被执行时该段数据被直接执行。</p>
+<p>也就是说，如果我们有如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const char main[]=&quot;\x00\x01\x02\x03&quot;;</span><br></pre></td></tr></table></figure></p>
+<p>当执行 ___libc_start_main 后跳到main变量上时，就会执行<strong>“\x00\x01\x02\x03”</strong>，若是将汇编转为这个形式，则会执行这些汇编语句。</p>
+<p>但是题目中并不允许我们用<strong>[]</strong>。在<strong>GCC</strong>中，相邻的的变量，在储存空间中位置也是相邻的，所以我们可以把数据分开存储：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const char main=0x1, main1=0x1, main2=0x2, main3=0x3;</span><br></pre></td></tr></table></figure></p>
+<p>这样可以达到同样的效果，并且符合题意。</p>
+<p>因此，只要把输出部分转换成汇编形式，然后再写成机械码，就可以实现题目。本篇blog在此不做详细说明，所以，请学会如何写<em>shellcode</em>。</p>
+<h1 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h1><p><a href="http://blog.plusls.cn/technical/pwn/write-helloworld-without-bracket/" target="_blank" rel="noopener">Plusls’ blog</a></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本来最后一问没想写这么多。当时找不到题目描述，然后在CNSS 2017里面问了一下，狗头大大：看我Blog啊。</p>
+<p>然后看狗头大大分析了一波，感觉自己多写点吧。</p>
+<p>致谢Plusls。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69833742-2', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>

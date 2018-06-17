@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="转眼又是一年，想来又老了一岁，看到昨天空间刷的18岁，也确实值得缅怀一下？
+那一年我高三。18岁嘛，少年当头，青春正好，然后我在高三。也就是那一年，跨过了人生中第二道门槛(?),高考。
+听高中老师忽,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">关于double 5/2=2.00000</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div>
+        <h1 class="title">关于double 5/2=2.00000</h1>
+        <div class="stuff">
+            <span>十一月 14, 2016</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/2016/">2016</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Blogs/">Blogs</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>曾经有小伙伴问过关于C语言”/“运算符的问题，简单的来说一下。</p>
+<a id="more"></a>
+<h1 id="关于double-5-2-2-00000-的问题"><a href="#关于double-5-2-2-00000-的问题" class="headerlink" title="关于double 5/2=2.00000 的问题"></a>关于double 5/2=2.00000 的问题</h1><p>我们先贴代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main ()</span><br><span class="line">&#123;</span><br><span class="line">	double n;</span><br><span class="line">	int a = 5;</span><br><span class="line">	int b = 2;</span><br><span class="line">	n = a/b;</span><br><span class="line">	printf (&quot;%lf&quot;,n);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以用python跑一下结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; a = 5/2</span><br><span class="line">&gt;&gt;&gt; print a</span><br><span class="line">2</span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line">&gt;&gt;&gt; float(a)</span><br><span class="line">2.0</span><br><span class="line">&gt;&gt;&gt; float(5/2)</span><br><span class="line">2.0</span><br></pre></td></tr></table></figure></p>
+<p>那么问题来了，为什么会得到2.0的结果。</p>
+<p>有同学说：”/“就是取整的符号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; float(5.0/2)</span><br><span class="line">2.5</span><br><span class="line">&gt;&gt;&gt; float(5/2.0)</span><br><span class="line">2.5</span><br></pre></td></tr></table></figure>
+<p>计算结果说明了<strong>“/“并不能单纯地理解成取整符号</strong>。</p>
+<p>我们知道，计算机有个<strong>栈机制</strong>。</p>
+<p>对于栈机制，简单说一下。计算机的堆栈是<strong>从下向上的</strong>，堆栈像一个盒子，只有一个出口，并且是按顺序进行读写，所以<strong>最先进入堆栈的被最后读取，最后进入堆栈的被首先读取</strong>。</p>
+<p>然后，当代码执行到”n = a/b”时，计算机会首先读取”a/b”部分，然后把计算结果赋值给”n”。</p>
+<p>我们可以<strong>暂时</strong>理解成：因为我们的”a”，”b”都定义为”int”形式，所以得到的结果为2，所以”n = 2”，然后转化成”double”就是”n = 2.000000”。</p>
+<p>但是如果我们把”a”或者”b”的其中一个定义成”double”型会怎么样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	double n;</span><br><span class="line">	int a = 5;</span><br><span class="line">	double b = 2;</span><br><span class="line">	n = a / b;</span><br><span class="line">	printf(&quot;%lf&quot;, n);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后的输出结果是”n = 2.500000”。</p>
+<p>可见，当代码执行到”n = a/b”时，”a/b”得到的结果是一个浮点数。</p>
+<p>那么现在的问题是：<strong>如何判断计算”a/b”计算之后所得到的值的类型</strong>。</p>
+<h2 id="以下为所讲重点"><a href="#以下为所讲重点" class="headerlink" title="以下为所讲重点"></a>以下为所讲重点</h2><p>从编译器的角度来讲，在计算”a/b”时，<strong>编译器会读取”a”和”b”的数据类型，根据”a”和”b”的数据类型来定义计算所得值(n)的类型，再根据用户所定义的所得值(n)的类型对所得值进行修改。</strong></p>
+<p>当”a”和”b”均定义为”int”时，计算所得值为”int”类型，所以在计算”a/b”之后，”n = 2”,然后根据我们定义的”n”的类型(double),将”n = 2”修改为”n = 2.000000”。</p>
+<p>当”a”和”b”被定义为”int”和”double”时，编译器会在计算”a/b”时将所得值定义为”double”，所以我们得到的是”n = 2.500000”。</p>
+<p>也就是说，<strong>当编译器进行计算时，最终所得值与参与计算的值的数据类型有必然联系</strong>。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>可能说的有些片面，如果多实践一下应该是可以理解的。C语言博大精深，我好菜啊。。。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69833742-2', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>

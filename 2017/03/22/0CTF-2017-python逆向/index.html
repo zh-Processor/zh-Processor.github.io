@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="转眼又是一年，想来又老了一岁，看到昨天空间刷的18岁，也确实值得缅怀一下？
+那一年我高三。18岁嘛，少年当头，青春正好，然后我在高三。也就是那一年，跨过了人生中第二道门槛(?),高考。
+听高中老师忽,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">0CTF_2017_python逆向</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div>
+        <h1 class="title">0CTF_2017_python逆向</h1>
+        <div class="stuff">
+            <span>三月 22, 2017</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/2017/">2017</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Blogs/">Blogs</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/CTF/">CTF</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>上周末打了一下0CTF，实力被虐了一波，好歹也是拿下了萌新组第一。。。</p>
+<a id="more"></a>
+<h1 id="Python逆向-in-0CTF—2017"><a href="#Python逆向-in-0CTF—2017" class="headerlink" title="Python逆向 in 0CTF—2017"></a>Python逆向 in 0CTF—2017</h1><p>题目是一个.pyc文件，和一段密文，解题思路类似于python的pyc逆向。</p>
+<p>查了一下pyc文件的格式，发现文件的前四位是magic number，用来识别python版本，接着的四位为时间戳。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import dis , marshal</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; f = open(&quot;crypt.pyc&quot;) </span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; f.read(4)</span><br><span class="line">&apos;\x03\xf3\r\n&apos;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; f.read(4)</span><br><span class="line">&apos;f4oX&apos;</span><br></pre></td></tr></table></figure>
+<p>接下来是读取opcode，发现opcode逻辑不对，所以修改opcode来还原函数算法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; code = marshal.load(f)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; code.co_consts</span><br><span class="line">(-1, None, &lt;code object encrypt at 0x7f434f8a09b0, file &quot;/Users/hen/Lab/0CTF/py/crypt.py&quot;, line 2&gt;, &lt;code object decrypt at 0x7f434fed9430, file &quot;/Users/hen/Lab/0CTF/py/crypt.py&quot;, line 10&gt;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; enc = code.co_consts[2]</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; dec = code .co_consts[3]</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; dis.dis(dec.co_code)</span><br><span class="line">          0 &lt;153&gt;               1</span><br><span class="line">          3 BUILD_SET           1          //右边数字代表了调用了第几个量，从0开始计数</span><br><span class="line">          6 &lt;153&gt;               2</span><br><span class="line">          9 BUILD_SET           2</span><br><span class="line">         12 &lt;153&gt;               3</span><br><span class="line">         15 BUILD_SET           3</span><br><span class="line">         18 STORE_GLOBAL        1 (1)</span><br><span class="line">         21 &lt;153&gt;               4</span><br><span class="line">         24 PRINT_EXPR     </span><br><span class="line">         25 &lt;153&gt;               5</span><br><span class="line">         28 &lt;39&gt;           </span><br><span class="line">         29 STORE_GLOBAL        2 (2)</span><br><span class="line">         32 STORE_GLOBAL        1 (1)</span><br><span class="line">         35 &lt;39&gt;           </span><br><span class="line">         36 STORE_GLOBAL        3 (3)</span><br><span class="line">         39 &lt;39&gt;           </span><br><span class="line">         40 &lt;153&gt;               6</span><br><span class="line">         43 PRINT_EXPR     </span><br><span class="line">         44 &lt;39&gt;           </span><br><span class="line">         45 &lt;153&gt;               5</span><br><span class="line">         48 &lt;39&gt;           </span><br><span class="line">         49 STORE_GLOBAL        2 (2)</span><br><span class="line">         52 &lt;153&gt;               6</span><br><span class="line">         55 PRINT_EXPR     </span><br><span class="line">         56 &lt;39&gt;           </span><br><span class="line">         57 &lt;153&gt;               7</span><br><span class="line">         60 &lt;39&gt;           </span><br><span class="line">         61 BUILD_SET           4</span><br><span class="line">         64 &lt;155&gt;               0</span><br><span class="line">         67 DELETE_ATTR         1 (1)</span><br><span class="line">         70 STORE_GLOBAL        4 (4)</span><br><span class="line">         73 CALL_FUNCTION       1</span><br><span class="line">         76 BUILD_SET           5</span><br><span class="line">         79 STORE_GLOBAL        5 (5)</span><br><span class="line">         82 DELETE_ATTR         2 (2)</span><br><span class="line">         85 STORE_GLOBAL        0 (0)</span><br><span class="line">         88 CALL_FUNCTION       1</span><br><span class="line">         91 RETURN_VALUE</span><br></pre></td></tr></table></figure>
+<p>然后查看有关函数的信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; dec.co_names</span><br><span class="line">(&apos;rotor&apos;, &apos;newrotor&apos;, &apos;decrypt&apos;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; enc.co_names</span><br><span class="line">(&apos;rotor&apos;, &apos;newrotor&apos;, &apos;encrypt&apos;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; enc.co_varnames</span><br><span class="line">(&apos;data&apos;, &apos;key_a&apos;, &apos;key_b&apos;, &apos;key_c&apos;, &apos;secret&apos;, &apos;rot&apos;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; dec.co_varnames</span><br><span class="line">(&apos;data&apos;, &apos;key_a&apos;, &apos;key_b&apos;, &apos;key_c&apos;, &apos;secret&apos;, &apos;rot&apos;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; dec.co_consts</span><br><span class="line">(None, &apos;!@#$%^&amp;*&apos;, &apos;abcdefgh&apos;, &apos;&lt;&gt;&#123;&#125;:&quot;&apos;, 4, &apos;|&apos;, 2, &apos;EOF&apos;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; enc.co_consts</span><br><span class="line">(None, &apos;!@#$%^&amp;*&apos;, &apos;abcdefgh&apos;, &apos;&lt;&gt;&#123;&#125;:&quot;&apos;, 4, &apos;|&apos;, 2, &apos;EOF&apos;)</span><br></pre></td></tr></table></figure>
+<p>发现两个函数的变量和常量一致，所以我们只需要复现出解密函数就可以解密密文。函数有三个比较瞩目的参数’key_a’, ‘key_b’, ‘key_c’,三个参数在’varnames’中正好对应了’1’,’2’,’3’三个位置，所以我们可以推断出’co_code’的前六行是利用‘!@#$%^&amp;*’, ‘abcdefgh’, ‘&lt;&gt;{}:”‘对’key_a’, ‘key_b’, ‘key_c’赋值。</p>
+<p><a href="https://github.com/python/cpython/blob/master/Include/opcode.h" target="_blank" rel="noopener">https://github.com/python/cpython/blob/master/Include/opcode.h</a><br><a href="https://docs.python.org/2/library/dis.html#opcode-BUILD_SET" target="_blank" rel="noopener">https://docs.python.org/2/library/dis.html#opcode-BUILD_SET</a></p>
+<p>可查opcode表，读取常量操作应为“100”，而我们得到的却是“153”，并且赋值的指令应为“125”，所以，我们的第一次修改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; dis.dis(dec.co_code.replace(&quot;\x99&quot;,&quot;\x64&quot;).replace(&quot;\x68&quot;,&quot;\x7d&quot;))</span><br><span class="line">          0 LOAD_CONST          1 (1)    (&apos;!@#$%^&amp;*&apos;)</span><br><span class="line">          3 STORE_FAST          1 (1)    (key_a)</span><br><span class="line">          6 LOAD_CONST          2 (2)    (&apos;abcdefgh&apos;)</span><br><span class="line">          9 STORE_FAST          2 (2)    (key_b)</span><br><span class="line">         12 LOAD_CONST          3 (3)    (&apos;&lt;&gt;&#123;&#125;:&quot;&apos;)</span><br><span class="line">         15 STORE_FAST          3 (3)    (key_c)</span><br><span class="line">         18 STORE_GLOBAL        1 (1)</span><br><span class="line">         21 LOAD_CONST          4 (4)    (4)</span><br><span class="line">         24 PRINT_EXPR     </span><br><span class="line">         25 LOAD_CONST          5 (5)    (&apos;|&apos;)</span><br><span class="line">         28 &lt;39&gt;           </span><br><span class="line">         29 STORE_GLOBAL        2 (2)</span><br><span class="line">         32 STORE_GLOBAL        1 (1)</span><br><span class="line">         35 &lt;39&gt;           </span><br><span class="line">         36 STORE_GLOBAL        3 (3)</span><br><span class="line">         39 &lt;39&gt;           </span><br><span class="line">         40 LOAD_CONST          6 (6)    (2)</span><br><span class="line">         43 PRINT_EXPR     </span><br><span class="line">         44 &lt;39&gt;           </span><br><span class="line">         45 LOAD_CONST          5 (5)    (&apos;|&apos;)</span><br><span class="line">         48 &lt;39&gt;           </span><br><span class="line">         49 STORE_GLOBAL        2 (2)</span><br><span class="line">         52 LOAD_CONST          6 (6)    (2)</span><br><span class="line">         55 PRINT_EXPR     </span><br><span class="line">         56 &lt;39&gt;           </span><br><span class="line">         57 LOAD_CONST          7 (7)    (&apos;EOF&apos;)</span><br><span class="line">         60 &lt;39&gt;           </span><br><span class="line">         61 STORE_FAST          4 (4)    (secret)</span><br><span class="line">         64 &lt;155&gt;               0</span><br><span class="line">         67 DELETE_ATTR         1 (1)</span><br><span class="line">         70 STORE_GLOBAL        4 (4)</span><br><span class="line">         73 CALL_FUNCTION       1</span><br><span class="line">         76 STORE_FAST          5 (5)    (rot)</span><br><span class="line">         79 STORE_GLOBAL        5 (5)</span><br><span class="line">         82 DELETE_ATTR         2 (2)</span><br><span class="line">         85 STORE_GLOBAL        0 (0)</span><br><span class="line">         88 CALL_FUNCTION       1</span><br><span class="line">         91 RETURN_VALUE</span><br></pre></td></tr></table></figure>
+<p>我们可以确定如上数据。程序有两个’CALL_FUNCTION’，所以一共调用了两次函数，第二次可以确定为为return。查看rotor库的说明，发现其有’rotor.newrotor()’操作和’rot.decrypt()’操作。可以推断return返回值为解密得到的值，并且解密和return是同一操作，可以确定’return rot.decrypt(data)’。<a href="https://docs.python.org/2.0/lib/module-rotor.html" target="_blank" rel="noopener">https://docs.python.org/2.0/lib/module-rotor.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">79 STORE_GLOBAL        5 (5)    (rot)</span><br><span class="line">82 DELETE_ATTR         2 (2)    (decrypt)</span><br><span class="line">85 STORE_GLOBAL        0 (0)    (data)</span><br></pre></td></tr></table></figure>
+<p>借此可以修改82和85行的opcode：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; dis.dis(dec.co_code.replace(&quot;\x99&quot;,&quot;\x64&quot;).replace(&quot;\x68&quot;,&quot;\x7d&quot;).replace(&quot;\x60&quot;,&quot;\x6a&quot;).replace(&quot;\x61&quot;,&quot;\x7c&quot;))</span><br><span class="line">          0 LOAD_CONST          1 (1)    (&apos;!@#$%^&amp;*&apos;)</span><br><span class="line">          3 STORE_FAST          1 (1)    (key_a)</span><br><span class="line">          6 LOAD_CONST          2 (2)    (&apos;abcdefgh&apos;)</span><br><span class="line">          9 STORE_FAST          2 (2)    (key_b)</span><br><span class="line">         12 LOAD_CONST          3 (3)    (&apos;&lt;&gt;&#123;&#125;:&quot;&apos;)</span><br><span class="line">         15 STORE_FAST          3 (3)    (key_c)</span><br><span class="line">         18 LOAD_FAST           1 (1)    (key_a)</span><br><span class="line">         21 LOAD_CONST          4 (4)    (4)</span><br><span class="line">         24 PRINT_EXPR     </span><br><span class="line">         25 LOAD_CONST          5 (5)    (&apos;|&apos;)</span><br><span class="line">         28 &lt;39&gt;           </span><br><span class="line">         29 LOAD_FAST           2 (2)    (key_b)</span><br><span class="line">         32 LOAD_FAST           1 (1)    (key_a)</span><br><span class="line">         35 &lt;39&gt;           </span><br><span class="line">         36 LOAD_FAST           3 (3)    (key_c)</span><br><span class="line">         39 &lt;39&gt;           </span><br><span class="line">         40 LOAD_CONST          6 (6)    (2)</span><br><span class="line">         43 PRINT_EXPR     </span><br><span class="line">         44 &lt;39&gt;           </span><br><span class="line">         45 LOAD_CONST          5 (5)    (&apos;|&apos;)</span><br><span class="line">         48 &lt;39&gt;           </span><br><span class="line">         49 LOAD_FAST           2 (2)    (key_b)</span><br><span class="line">         52 LOAD_CONST          6 (6)    (2)</span><br><span class="line">         55 PRINT_EXPR     </span><br><span class="line">         56 &lt;39&gt;           </span><br><span class="line">         57 LOAD_CONST          7 (7)    (&apos;EOF&apos;)</span><br><span class="line">         60 &lt;39&gt;           </span><br><span class="line">         61 STORE_FAST          4 (4)    (secret)</span><br><span class="line">         64 &lt;155&gt;               0</span><br><span class="line">         67 LOAD_ATTR           1 (1)    (newrotor)</span><br><span class="line">         70 LOAD_FAST           4 (4)    (secret)</span><br><span class="line">         73 CALL_FUNCTION       1</span><br><span class="line">         76 STORE_FAST          5 (5)    (rot)</span><br><span class="line">         79 LOAD_FAST           5 (5)    (rot)</span><br><span class="line">         82 LOAD_ATTR           2 (2)    (decrypt)</span><br><span class="line">         85 LOAD_FAST           0 (0)    (data)</span><br><span class="line">         88 CALL_FUNCTION       1</span><br><span class="line">         91 RETURN_VALUE</span><br></pre></td></tr></table></figure>
+<p>由于程序对’key_a’, ‘key_b’, ‘key_c’的操作都没有经过函数调用，所以只是基本的字符串操作。在第18和21行中看出，’key_a’有个对’4’的操作，所以有三种情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">key_a[4:]</span><br><span class="line">key_a[:4]</span><br><span class="line">key_a * 4</span><br></pre></td></tr></table></figure>
+<p>所以所有的’<39>‘有三种可能，需要一种一种的去测试。对于第64行的’<155>‘，结合上下代码可以推断出该处应为’rot = rotor.newrotor(secret)’。至此可以复现出源python代码。<br>经过测试’<39>‘的操作为’key_a * 4’。<br>自后得到的opcode为：</39></155></39></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"> 0 LOAD_CONST               1 (&apos;!@#$%^&amp;*&apos;)</span><br><span class="line"> 3 STORE_FAST               1 (key_a)</span><br><span class="line"> 6 LOAD_CONST               2 (&apos;abcdefgh&apos;)</span><br><span class="line"> 9 STORE_FAST               2 (key_b)</span><br><span class="line">12 LOAD_CONST               3 (&apos;&lt;&gt;&#123;&#125;:&quot;&apos;)</span><br><span class="line">15 STORE_FAST               3 (key_c)</span><br><span class="line">18 LOAD_FAST                1 (key_a)</span><br><span class="line">21 LOAD_CONST               4 (4)</span><br><span class="line">24 INPLACE_MULTIPLY             </span><br><span class="line">25 LOAD_CONST               5 (&apos;|&apos;)</span><br><span class="line">28 BINARY_ADD          </span><br><span class="line">29 LOAD_FAST                2 (key_b)</span><br><span class="line">32 LOAD_FAST                1 (key_a)</span><br><span class="line">35 BINARY_ADD          </span><br><span class="line">36 LOAD_FAST                3 (key_c)</span><br><span class="line">39 BINARY_ADD          </span><br><span class="line">40 LOAD_CONST               6 (2)</span><br><span class="line">43 INPLACE_MULTIPLY             </span><br><span class="line">44 BINARY_ADD          </span><br><span class="line">45 LOAD_CONST               5 (&apos;|&apos;)</span><br><span class="line">48 BINARY_ADD          </span><br><span class="line">49 LOAD_FAST                2 (key_b)</span><br><span class="line">52 LOAD_CONST               6 (2)</span><br><span class="line">55 INPLACE_MULTIPLY             </span><br><span class="line">56 BINARY_ADD          </span><br><span class="line">57 STORE_FAST               4 (secret)</span><br><span class="line">60 LOAD_GLOBAL              0 (rotor)</span><br><span class="line">63 LOAD_ATTR                1 (newrotor)</span><br><span class="line">66 LOAD_FAST                4 (secret)</span><br><span class="line">69 CALL_FUNCTION            1</span><br><span class="line">72 STORE_FAST               5 (rot)</span><br><span class="line">75 LOAD_FAST                5 (rot)</span><br><span class="line">78 LOAD_ATTR                2 (decrypt)</span><br><span class="line">81 LOAD_FAST                0 (buf)</span><br><span class="line">84 CALL_FUNCTION            1</span><br><span class="line">87 RETURN_VALUE</span><br></pre></td></tr></table></figure>
+<p>还原程序的加密部分：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import rotor</span><br><span class="line">def decrypt(data):</span><br><span class="line">	key_a = &quot;!@#$%^&amp;*&quot;</span><br><span class="line">	key_b = &quot;abcdefgh&quot;</span><br><span class="line">	key_c = &apos;&lt;&gt;&#123;&#125;:&quot;&apos;</span><br><span class="line">	secret=key_a*4 + &quot;|&quot; + (key_b+key_a+key_c)*2 + &quot;|&quot; + key_b*2 + &apos;EOF&apos;</span><br><span class="line">	rot = rotor.newrotor(secret)</span><br><span class="line">	return rot.decrypt(data)</span><br></pre></td></tr></table></figure>
+<p>payload.py</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import rotor</span><br><span class="line">def decrypt(data):</span><br><span class="line">    key_a = &quot;!@#$%^&amp;*&quot;</span><br><span class="line">    key_b = &quot;abcdefgh&quot;</span><br><span class="line">    key_c = &apos;&lt;&gt;&#123;&#125;:&quot;&apos;</span><br><span class="line">    secret=key_a*4 + &quot;|&quot; + (key_b+key_a+key_c)*2 + &quot;|&quot; + key_b*2 + &apos;EOF&apos;</span><br><span class="line">    rot = rotor.newrotor(secret)</span><br><span class="line">    return rot.decrypt(data)</span><br><span class="line"></span><br><span class="line">f = open(&quot;/home/processor/encrypted_flag&quot;)</span><br><span class="line">data = f.read()</span><br><span class="line">flag = decrypt(data)</span><br><span class="line">print flag</span><br></pre></td></tr></table></figure>
+<p>解密过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> ~ python payload.py</span><br><span class="line">flag&#123;Gue55_opcode_G@@@me&#125;</span><br></pre></td></tr></table></figure>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69833742-2', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
