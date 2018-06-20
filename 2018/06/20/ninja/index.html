@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Processor&#39;s Blog - I'm just a little role.</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    
+    <meta name="description" content="每一个不曾起舞的日子都是对生命的辜负,"> 
+    <meta name="author" content="Processor"> 
+    <link rel="alternative" href="atom.xml" title="Processor&#39;s Blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle"></h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div>
+        <h1 class="title"></h1>
+        <div class="stuff">
+            <span>六月 20, 2018</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <hr>
+<p>title: ninja插件简介<br>date: 2018-06-20 17:10:04<br>cover: /img/ninja/1.jpg<br>tags:</p>
+<ul>
+<li>ninja</li>
+<li>2018</li>
+<li>Blogs</li>
+</ul>
+<hr>
+<p>本来天大大哥说打算买一个ninja，然后就凑到了9个人。打算是十个人的话就忍痛买个$599.结果。。。结果。。。反正，向JD财团低头就对了。</p>
+<a id="more"></a>
+<h1 id="ninja插件简介"><a href="#ninja插件简介" class="headerlink" title="ninja插件简介"></a>ninja插件简介</h1><h2 id="关于ninja"><a href="#关于ninja" class="headerlink" title="关于ninja"></a>关于ninja</h2><p><a href="https://binary.ninja" target="_blank" rel="noopener">官网</a></p>
+<p>这里就放一下ninja的安利文</p>
+<p><a href="https://blog.trailofbits.com/2016/06/03/2000-cuts-with-binary-ninja/" target="_blank" rel="noopener"></a></p>
+<p><a href="https://www.trailofbits.com/research-and-development/binja" target="_blank" rel="noopener"></a></p>
+<h2 id="插件地址"><a href="#插件地址" class="headerlink" title="插件地址"></a>插件地址</h2><p><a href="https://github.com/Vector35/community-plugins" target="_blank" rel="noopener">Plugins</a></p>
+<h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/Vector35/community-plugins.git</span><br><span class="line"></span><br><span class="line">git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+<p>插件位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">OS X: ~/Library/Application Support/Binary Ninja/plugins/</span><br><span class="line"></span><br><span class="line">Linux: ~/.binaryninja/plugins/</span><br><span class="line"></span><br><span class="line">Windows: %APPDATA%\Binary Ninja\plugins</span><br></pre></td></tr></table></figure></p>
+<p><a href="https://docs.binary.ninja/guide/plugins/index.html" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="插件简介"><a href="#插件简介" class="headerlink" title="插件简介"></a>插件简介</h2><h4 id="Annotator"><a href="#Annotator" class="headerlink" title="Annotator"></a>Annotator</h4><p>在遇到libc函数调用时，该插件使用虚拟堆栈来注释先前的指令，并给出适当的注释，说明参数原型。</p>
+<h4 id="Keyhole"><a href="#Keyhole" class="headerlink" title="Keyhole"></a>Keyhole</h4><p>该插件迭代给定二进制文件中的所有已识别函数的</p>
+<ul>
+<li>指令数量</li>
+<li>基本块的数量</li>
+<li>函数调用次数</li>
+<li>正在调用给定函数的次数。</li>
+</ul>
+<p>把收集的信息以表格形式呈现，按照指令的数量排序。</p>
+<h4 id="Syscall-annotator"><a href="#Syscall-annotator" class="headerlink" title="Syscall annotator"></a>Syscall annotator</h4><p>在遇到系统调用时，它会用<em>检索的参数</em>进行注释。</p>
+<h4 id="SyscallIdentify"><a href="#SyscallIdentify" class="headerlink" title="SyscallIdentify"></a>SyscallIdentify</h4><p>SyscallIdentify是一个插件，用于标识所调用的<em>系统调用</em>并在注释中将其写入名称。</p>
+<h4 id="Windows-API-Annotator"><a href="#Windows-API-Annotator" class="headerlink" title="Windows API Annotator"></a>Windows API Annotator</h4><p>注释Windows API函数调用参数</p>
+<h4 id="Bookmarks"><a href="#Bookmarks" class="headerlink" title="Bookmarks"></a>Bookmarks</h4><p>这个插件使Binary Ninja用户可以为感兴趣的地址添加书签，并在以后快速导航回他们。</p>
+<p>由于用于将用户数据加载并保存到分析数据库的API尚不可用，因此现在必须手动保存书签并将其加载到单独的文件中。</p>
+<h4 id="CLIPPER-Architecture-Plugin"><a href="#CLIPPER-Architecture-Plugin" class="headerlink" title="CLIPPER Architecture Plugin"></a>CLIPPER Architecture Plugin</h4><p>用于CLIPPER体系结构的反汇编程序和提升程序，以及用于CLIPPER ROM映像和COFF对象/可执行文件的装载程序。</p>
+<p>这个插件拆卸CLIPPER汇编代码并生成LLIL。</p>
+<p>该插件还包含三个二进制视图，其中第一个可以加载InterPro计算机系统启动和闪存ROM映像。第二个设计用于处理CLIX使用的COFF可执行文件和目标文件（用于CLIPPER系统的UNIX SYSVR3）。第三个二进制视图处理磁盘分区映像，特别是REBUILD和FDMDISK引导软盘映像（以及I / O系统监视器，蓝屏实用程序和诊断代码）。</p>
+<p>CLIPPER架构插件有以下已知问题：不使用r15以外的寄存器进行堆栈操作。一些C400指令未实现，特别是延迟分支。</p>
+<h4 id="Frida-Plugin"><a href="#Frida-Plugin" class="headerlink" title="Frida Plugin"></a>Frida Plugin</h4><p>将Frida动态仪器工具包集成到Binary Ninja中的插件。</p>
+<p>这个插件利用Frida动态检测框架来简化Binary Ninja中的动态分析。</p>
+<p>该插件使用函数定义和类型信息（由Binary Ninja或用户输入标识）来自动定义Frida本地函数。</p>
+<p>要拦截一个功能，用户需要做的就是从选项菜单中选择拦截按钮。<br>一旦函数被截获，无论何时该函数被调用，默认情况下，参数和返回值都将被记录到Binary Ninja日志中。</p>
+<p>Frida的Hook行为也可以由用户修改。</p>
+<h4 id="LC-3-Architecture-Plugin"><a href="#LC-3-Architecture-Plugin" class="headerlink" title="LC-3 Architecture Plugin"></a>LC-3 Architecture Plugin</h4><p>用于反汇编Little Computer 3架构代码的插件</p>
+<h4 id="Symbols-Generator"><a href="#Symbols-Generator" class="headerlink" title="Symbols Generator"></a>Symbols Generator</h4><p>创建符号并在mach-o二进制文件中重命名函数以帮助反转。这仅适用于x86_64 Mach-O二进制文件，并且尚未在x86上进行测试。另外，“Mach-O绑定符号”需要<em>dyldinfo</em>。(在目标文件中显示dyld信息)</p>
+<h4 id="MSP430-Architecture-Plugin"><a href="#MSP430-Architecture-Plugin" class="headerlink" title="MSP430 Architecture Plugin"></a>MSP430 Architecture Plugin</h4><p>MSP430架构的反汇编程序并生成LLIL。</p>
+<h4 id="Pasticciotto-Architecture-Plugin"><a href="#Pasticciotto-Architecture-Plugin" class="headerlink" title="Pasticciotto Architecture Plugin"></a>Pasticciotto Architecture Plugin</h4><p>Pasticciotto架构的反汇编程序码。</p>
+<h4 id="binaryninja-radare2"><a href="#binaryninja-radare2" class="headerlink" title="binaryninja-radare2"></a>binaryninja-radare2</h4><p>这个插件允许Binary Ninja利用radare2的线性扫描（Binja目前不提供）。</p>
+<h4 id="Search-Immediate"><a href="#Search-Immediate" class="headerlink" title="Search Immediate"></a>Search Immediate</h4><p>和名字一样，用来搜索立即数。</p>
+<h4 id="SPU-Cell-Architecture-Plugin"><a href="#SPU-Cell-Architecture-Plugin" class="headerlink" title="SPU Cell Architecture Plugin"></a>SPU Cell Architecture Plugin</h4><p>SPU Cell架构的反汇编程序。</p>
+<h4 id="VMNDH-Architecture-Plugin"><a href="#VMNDH-Architecture-Plugin" class="headerlink" title="VMNDH Architecture Plugin"></a>VMNDH Architecture Plugin</h4><p>VMNDH体系结构的反汇编程序和升级程序。</p>
+<h4 id="AVR-plugin"><a href="#AVR-plugin" class="headerlink" title="AVR plugin"></a>AVR plugin</h4><p>这个插件增加了对binaryninja的AVR体系结构的支持。大多数结构可以正确识别。</p>
+<h4 id="msdn"><a href="#msdn" class="headerlink" title="msdn"></a>msdn</h4><p>用来查询MSDN API文档的插件。</p>
+<h4 id="arch-ref"><a href="#arch-ref" class="headerlink" title="arch_ref"></a>arch_ref</h4><p>提供有关当前体系结构的信息的插件。</p>
+<h4 id="explain-instruction"><a href="#explain-instruction" class="headerlink" title="explain_instruction"></a>explain_instruction</h4><p>用来。。解释。。汇编指令，它以简单的英语解释了汇编指令的功能。</p>
+<h4 id="Function-ABI-plugin"><a href="#Function-ABI-plugin" class="headerlink" title="Function ABI plugin"></a>Function ABI plugin</h4><p>ABI插件提供了一个用于以细粒度方式调整ABI的GUI。现在，调用约定和修饰寄存器可以调整。(用来调整sp)</p>
+<h4 id="Itanium-C-ABI-Plugin"><a href="#Itanium-C-ABI-Plugin" class="headerlink" title="Itanium C++ ABI Plugin"></a>Itanium C++ ABI Plugin</h4><p>没看懂，反正是C++逆向优化的。。。</p>
+<h4 id="Sibyl"><a href="#Sibyl" class="headerlink" title="Sibyl"></a>Sibyl</h4><p>Sybil是一种基于其副作用识别标准功能的工具(看起来很玄学的东西)</p>
+<h4 id="binjago"><a href="#binjago" class="headerlink" title="binjago"></a>binjago</h4><p>binjago是一个静态分析和利用ninja插件形式的开发框架</p>
+<p>Binjago目前提供插件来：</p>
+<ul>
+<li>计算x86和x86-64 </li>
+<li>ROP小工具识别二进制flat文件中的函数序言（固件）</li>
+<li>找到并应用注释到间接和直接的递归逻辑</li>
+<li>将注释应用于标准函数调用</li>
+</ul>
+<h4 id="binjatron"><a href="#binjatron" class="headerlink" title="binjatron"></a>binjatron</h4><p>用于Voltron集成的Binary Ninja插件。</p>
+<p>Features:</p>
+<ul>
+<li>在Binary Ninja的调试器中标记当前的指令指针</li>
+<li>标记在Binary Ninja的调试器中设置的断点</li>
+<li>在Binary Ninja中设置和删除调试器中的断点</li>
+<li>在Binary Ninja中使用调试器同步代码更新</li>
+</ul>
+<p>Support:</p>
+<ul>
+<li>一切工作在LLDB（除了现在写内存）</li>
+<li>GDB中的某些功能可能无法正常工作</li>
+<li>某些功能可能在WinDbg和VDB中运行，但尚未经过测试</li>
+</ul>
+<h4 id="BINoculars"><a href="#BINoculars" class="headerlink" title="BINoculars"></a>BINoculars</h4><p>集中静态分析中有用的特征。</p>
+<h4 id="BNHook"><a href="#BNHook" class="headerlink" title="BNHook"></a>BNHook</h4><p>目前支持x86和x86_64 ELF可执行文件。在程序集中编写一个Hook，并将它作为二进制文件的一部分执行。将Hook添加到二进制文件中，并反映在反汇编图中。二进制代码段被扩展以腾出空间。插入后，将内容另存为并使用插入的代码运行二进制文件。</p>
+<h4 id="bnil-graph"><a href="#bnil-graph" class="headerlink" title="bnil-graph"></a>bnil-graph</h4><p>在BNIL指令树中进行图形化</p>
+<h4 id="bnpy"><a href="#bnpy" class="headerlink" title="bnpy"></a>bnpy</h4><p>用来反汇编原始python字节码。</p>
+<h4 id="CryptoScan"><a href="#CryptoScan" class="headerlink" title="CryptoScan"></a>CryptoScan</h4><p>可以识别加密方式的插件，类似于IDA的Findcrypt。</p>
+<h4 id="Djumpo-Unchained"><a href="#Djumpo-Unchained" class="headerlink" title="Djumpo Unchained"></a>Djumpo Unchained</h4><p>去除混淆链式跳转。</p>
+<h4 id="easypatch"><a href="#easypatch" class="headerlink" title="easypatch"></a>easypatch</h4><p>允许从右键菜单修补内存操作数。</p>
+<h4 id="Intel-8051-Family-Architecture-Plugin"><a href="#Intel-8051-Family-Architecture-Plugin" class="headerlink" title="Intel 8051 Family Architecture Plugin"></a>Intel 8051 Family Architecture Plugin</h4><p>针对各种基于MCS-51的芯片的反汇编程序。</p>
+<h4 id="Simple-Linear-Sweep-for-BinaryNinja"><a href="#Simple-Linear-Sweep-for-BinaryNinja" class="headerlink" title="Simple Linear Sweep for BinaryNinja"></a>Simple Linear Sweep for BinaryNinja</h4><p>针对x86和x86_64的简单线性扫描。它通过搜索共同序言来识别功能，并通过分析创建的功能来尝试避免一些误报。(看不懂看不懂)</p>
+<h4 id="llvm-deobfuscator"><a href="#llvm-deobfuscator" class="headerlink" title="llvm-deobfuscator"></a>llvm-deobfuscator</h4><p>去除OLLVM混淆，不多说。。(我TM吹爆)</p>
+<h4 id="Nampa-FLIRT-for-binary-ninjas"><a href="#Nampa-FLIRT-for-binary-ninjas" class="headerlink" title="Nampa - FLIRT for (binary) ninjas"></a>Nampa - FLIRT for (binary) ninjas</h4><p>IDA Pro的FLIRT技术和Binary Ninja插件的纯Python实现</p>
+<h4 id="RetDec-Offline-Decompiler"><a href="#RetDec-Offline-Decompiler" class="headerlink" title="RetDec Offline Decompiler"></a>RetDec Offline Decompiler</h4><p>该插件使用RetDec将代码机反编译为C代码</p>
+<h4 id="ripr"><a href="#ripr" class="headerlink" title="ripr"></a>ripr</h4><p>没理解错的话，在python中调用二进制文件中的某功能</p>
+<h4 id="Trickle-Down-Variables"><a href="#Trickle-Down-Variables" class="headerlink" title="Trickle-Down Variables"></a>Trickle-Down Variables</h4><p>许多MLIL变量不会做任何事情，只需将数据从location传送到另一个location。通过查看MLIL var定义和用法，可以识别这些情况并自动重命名所涉及的变量。</p>
+<h4 id="x64dbgbinja"><a href="#x64dbgbinja" class="headerlink" title="x64dbgbinja"></a>x64dbgbinja</h4><p>官方的x64dbg插件</p>
+<h4 id="Xref-Call-Finder"><a href="#Xref-Call-Finder" class="headerlink" title="Xref Call Finder"></a>Xref Call Finder</h4><p>调用关系的视图。</p>
+<h1 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h1><p>对！你没猜错！我就是对照官方文档写的！</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
