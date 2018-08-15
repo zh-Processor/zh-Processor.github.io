@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Processor&#39;s Blog - I'm just a little role.</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Processor,"> 
+    <meta name="description" content="每一个不曾起舞的日子都是对生命的辜负,"> 
+    <meta name="author" content="Processor"> 
+    <link rel="alternative" href="atom.xml" title="Processor&#39;s Blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">DASP_Top_10分析</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">DASP_Top_10分析</h1>
+        <div class="stuff">
+            <span>八月 15, 2018</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/2018/">2018</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Blogs/">Blogs</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/智能合约/">智能合约</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <a id="more"></a>
+<h1 id="以太坊智能合约DASP-Top-10-分析"><a href="#以太坊智能合约DASP-Top-10-分析" class="headerlink" title="以太坊智能合约DASP Top 10 分析"></a>以太坊智能合约DASP Top 10 分析</h1><h2 id="几个重要概念"><a href="#几个重要概念" class="headerlink" title="几个重要概念"></a>几个重要概念</h2><h3 id="回调函数—-fallback"><a href="#回调函数—-fallback" class="headerlink" title="回调函数—-fallback()"></a>回调函数—-fallback()</h3><p>目前相当一部分Solidity的安全漏洞源于回退函数。</p>
+<p>关于回退函数，官方文档解释如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">A contract can have exactly one unnamed function. </span><br><span class="line">This function cannot have arguments and cannot return anything. </span><br><span class="line">It is executed on a call to the contract if none of the other functions match the given function identifier (or if no data was supplied at all).</span><br><span class="line"></span><br><span class="line">//fallback()是在合约中没有直接定义的，并且没有参数没有返回值的函数。</span><br><span class="line">//当没有其他函数与给定的函数标识符匹配，或者没有数据传入时，fallback()会被调用。</span><br></pre></td></tr></table></figure>
+<p>简单来说：</p>
+<ol>
+<li>当外部账户或其他合约调用了一个<code>不存在</code>的函数时</li>
+<li>未向该合约发送任何数据时</li>
+</ol>
+<p>fallback()函数会被调用。</p>
+<h3 id="三种交易的方式"><a href="#三种交易的方式" class="headerlink" title="三种交易的方式"></a>三种交易的方式</h3><p>Solidity 中，<code>transfer()</code>,<code>send()</code>,<code>call.value()</code>都可以用来向地址转入<code>ether</code>。</p>
+<h5 id="transfer"><a href="#transfer" class="headerlink" title="transfer()"></a>transfer()</h5><ol>
+<li>失败会<code>throw</code>，标记错误并恢复当前调用  (<code>throw</code>几乎等同于<code>revert</code>)</li>
+<li>传递2300Gas，防止重入</li>
+</ol>
+<h5 id="send"><a href="#send" class="headerlink" title="send()"></a>send()</h5><ol>
+<li>失败会返回<code>false</code>布尔值</li>
+<li>传递2300Gas，防止重入</li>
+</ol>
+<h5 id="call-value"><a href="#call-value" class="headerlink" title="call.value()"></a>call.value()</h5><ol>
+<li>失败会传递<code>false</code>布尔值</li>
+<li>传递所有可用Gas，不能有效防止重入</li>
+</ol>
+<h3 id="Gas"><a href="#Gas" class="headerlink" title="Gas"></a>Gas</h3><p><code>EVM</code>在执行代码时，每一步都会消耗一定的<code>Gas</code>，来防止智能合约出现死循环。</p>
+<p>外部调用在调用合约中某函数时，会提供一定数量的<code>Gas</code>，如果提供的<code>Gas</code>大于调用该函数所需的<code>Gas</code>，则该函数会被成功执行；否则会抛出<code>out of Gas</code>的异常，然后合约状态回滚。</p>
+<h3 id="selfdestruct"><a href="#selfdestruct" class="headerlink" title="selfdestruct"></a>selfdestruct</h3><p>任何合约都能实现<code>selfdestruct(address)</code>: 将当前合约地址中的所有的字节码删除，并将储存在该合约的所有以太币发送到参数指定的地址。</p>
+<p>所以，该函数可以用于强制将以太币发送到任意合约。</p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>这里将主要分析<a href="https://www.dasp.co/" target="_blank" rel="noopener">DASP Top 10</a></p>
+<ol>
+<li>Reentrancy</li>
+<li>Access Control</li>
+<li>Arithmetic Issues</li>
+<li>Unchecked Return Values For Low Level Calls </li>
+<li>Denial of Service</li>
+<li>Bad Randomness </li>
+<li>Front Running</li>
+<li>Time manipulation</li>
+<li>Short Address Attack </li>
+<li>Unknown Unknowns </li>
+</ol>
+<p>并且一些其他的漏洞</p>
+<ol>
+<li>Unexpected Ether</li>
+<li>Tx.Origin Authentication</li>
+</ol>
+<h3 id="Reentrancy"><a href="#Reentrancy" class="headerlink" title="Reentrancy"></a>Reentrancy</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this exploit was missed in review so many times by so many different people: reviewers tend to review functions one at a time, and assume that calls to secure subroutines will operate securely and as intended.</span><br><span class="line"></span><br><span class="line">-- Phil Daian</span><br></pre></td></tr></table></figure>
+<p>重入漏洞，可以理解为由于递归引起的漏洞。</p>
+<p>我们之前有提到过<code>Gas</code>的概念：<code>EVM</code>在执行代码时，每一步都会消耗一定的<code>Gas</code>，来防止智能合约出现死循环。</p>
+<p>还有<code>call.value()</code>的交易方式，因为这个函数会传递所有可用Gas，不能有效防止重入。</p>
+<p>来看一段示例代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function withdraw(uint _amount) &#123;</span><br><span class="line">    require(balances[msg.sender] &gt;= _amount);</span><br><span class="line">        //判断账户资产是否足够</span><br><span class="line">    msg.sender.call.value(_amount)();</span><br><span class="line">        //发送Ether</span><br><span class="line">    balances[msg.sender] -= _amount;</span><br><span class="line">        //修改账户资产数据</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设有一个公共钱包的场景。如果<code>withdraw()</code>函数由外部合约调用，并且外部合约包含了恶意构造的递归调用，则将会将公共钱包内的余额全部取出。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function () payable&#123;</span><br><span class="line">    address.call(bytes4(keccak256(&quot;withdraw(address,uint256)&quot;)), this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>外部调用如果包含类似上面代码，就会出现重入的情况。</p>
+<p>外部协议调用<code>withdraw()</code> –&gt; <code>withdraw()</code>向外部合约发送<code>Ether</code> –&gt; 外部合约收到<code>Ether</code>，触发<code>fallback()</code> –&gt; <code>fallback()</code>调用<code>withdraw</code>  ······</p>
+<h3 id="Access-Control"><a href="#Access-Control" class="headerlink" title="Access Control"></a>Access Control</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">it was possible to turn the Parity Wallet library contract into a regular multi-sig wallet and become an owner of it by calling the initWallet function.</span><br><span class="line"></span><br><span class="line">-- Parity</span><br></pre></td></tr></table></figure>
+<p>访问控制。在<code>Solidity</code>中，有四种关键字用来控制函数或者变量的访问域：<code>private</code>,<code>public</code>,<code>external</code>,<code>internal</code>.</p>
+<p><code>private</code>: 该变量或函数只能在本合约被使用。但是以太坊是公链，所以这只是在代码层面的限制。</p>
+<p><code>public</code>: 该变量或函数可以被任意账户调用。</p>
+<p><code>external</code>: 该函数只能从外部调用。或使用<code>this.func()</code>的方式调用。</p>
+<p><code>internal</code>: 在合约继承中，父合约中被标记的变量或函数可以被子合约直接调用。</p>
+<p>关于函数底层调用的三个函数：<code>call()</code>,<code>delegatecall()</code>,<code>callcode()</code></p>
+<p><code>call()</code>: 用于外部调用，返回一个布尔值来表明外部调用成功与否。它可以被修饰</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">address.call.gas(1000000)(&quot;register&quot;, &quot;MyName&quot;);</span><br><span class="line">address.call.value(1 ether)(&quot;register&quot;, &quot;MyName&quot;);</span><br><span class="line">address.call.gas(1000000).value(1 ether)(&quot;register&quot;, &quot;MyName&quot;);</span><br></pre></td></tr></table></figure>
+<p><code>delegatecall()</code>: 将外部代码直接作用于当前合约的上下文，返回一个布尔值来表明外部调用成功与否。相当于在原合约处插入被调用函数的代码。与<code>call</code>的区别在于，它仅仅是调用了代码，它所调用的数据都是当前合约的数据。</p>
+<p><code>callcode()</code>: 与<code>delegatecall()</code>类似，但是它未提供对<code>msg.sender</code>,<code>msg.value</code>的访问权限。</p>
+<p>如下示例代码：(OpenZeppelin CTF)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.10;</span><br><span class="line"></span><br><span class="line">contract Delegate &#123;</span><br><span class="line">    address public owner;</span><br><span class="line"></span><br><span class="line">    function Delegate(address _owner) &#123;</span><br><span class="line">        owner = _owner;</span><br><span class="line">    &#125;</span><br><span class="line">    function pwn() &#123;</span><br><span class="line">        owner = msg.sender;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract Delegation &#123;</span><br><span class="line">    address public owner;</span><br><span class="line">    Delegate delegate;</span><br><span class="line"></span><br><span class="line">    function Delegation(address _delegateAddress) &#123;</span><br><span class="line">        delegate = Delegate(_delegateAddress);</span><br><span class="line">        owner = msg.sender;</span><br><span class="line">    &#125;</span><br><span class="line">    function () &#123;</span><br><span class="line">        if (delegate.delegatecall(msg.data)) &#123;</span><br><span class="line">            this;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>合约在<code>fallback()</code>中调用了<code>delegate.delegatecall()</code>，并且<code>msg.data</code>可控。</p>
+<p>我们可以令<code>msg.data = bytes4(keccak256(&quot;pwn()&quot;))</code>，便可将<code>delegation</code>合约的<code>owner</code>修改为<code>msg.sender</code>。</p>
+<h3 id="Arithmetic-Issues"><a href="#Arithmetic-Issues" class="headerlink" title="Arithmetic Issues"></a>Arithmetic Issues</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">An overflow condition gives incorrect results and, particularly if the possibility has not been anticipated, can compromise a program’s reliability and security.</span><br><span class="line"></span><br><span class="line">-- Jules Dourlens</span><br></pre></td></tr></table></figure>
+<p>算术问题，主要是整数溢出，包括整数上溢和整数下溢。</p>
+<p>我们先以<code>八位无符号整数为例</code>，即<code>uint8</code>。</p>
+<p>八位无符号整形的范围是 <code>[0,255]</code>。<code>255</code>的按位表示为<code>11111111</code>。</p>
+<p>如果再<code>+1</code>，则会变成<code>00000000</code>，最高位被舍弃。所以，<code>(uint8)255 + 1 = 0</code>。</p>
+<p>同理，<code>(uint)0 - 1 = 255</code>。</p>
+<p>以<code>八位有符号整数</code>为例，即<code>int8</code>。</p>
+<p>八位有符号整形的范围是 <code>[-128,127]</code>。<code>127</code>的按位表示为<code>01111111</code>。(最高位为符号位)</p>
+<p>如果再<code>+1</code>，则会变成<code>10000000</code>，即<code>128</code>。所以，<code>(int8)127 + 1 = -128</code></p>
+<p>同理，<code>(int8)(-128) - 1 = 127</code>。</p>
+<p>示例代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function withdraw(uint _amount) &#123;</span><br><span class="line">require(balances[msg.sender] - _amount &gt; 0);</span><br><span class="line">    msg.sender.transfer(_amount);</span><br><span class="line">    balances[msg.sender] -= _amount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>withdraw</code>函数虽然在<code>require(balances[msg.sender] - _amount &gt; 0)</code>对数据进行了检查，但是这里可以发生<code>整数下溢</code>。如果我们请求的数据<code>大于</code>余额，则会因为<code>整数下溢</code>导致结果依然大于0，使检查通过，从而获取到多余自己余额的货币，甚至在<code>balances[msg.sender] -= _amount</code>之后，余额数量变的特别大。</p>
+<p>对于上述问题的修补方案，我们可以使用<code>require(balances[msg.sender] &gt; _amount)</code>。</p>
+<h3 id="Unchecked-Return-Values-For-Low-Level-Calls"><a href="#Unchecked-Return-Values-For-Low-Level-Calls" class="headerlink" title="Unchecked Return Values For Low Level Calls"></a>Unchecked Return Values For Low Level Calls</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The use of low level &quot;call&quot; should be avoided whenever possible. It can lead to unexpected behavior if return values are not handled properly.</span><br><span class="line"></span><br><span class="line">-- Remix</span><br></pre></td></tr></table></figure>
+<p>没有严格的判断不安全函数的返回值。</p>
+<p>这里请回顾一下前面提到的三种交易方式。</p>
+<p>代码示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function withdraw(uint256 _amount) public &#123;</span><br><span class="line">require(balances[msg.sender] &gt;= _amount);</span><br><span class="line">    balances[msg.sender] -= _amount;</span><br><span class="line">    etherLeft -= _amount;</span><br><span class="line">    msg.sender.send(_amount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果<code>withdraw</code>被调用，将<code>Ether</code>发送给不接受直接交易的合约，其返回值将会为<code>false</code>。但是由于没有检查<code>send()</code>返回值，将导致账户余额被扣除，收款方未收到交易。</p>
+<h3 id="Denial-of-Service"><a href="#Denial-of-Service" class="headerlink" title="Denial of Service"></a>Denial of Service</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">I accidentally killed it.</span><br><span class="line"></span><br><span class="line">-- devops199 on the Parity multi-sig wallet</span><br></pre></td></tr></table></figure>
+<p>拒绝服务漏洞：通过对<code>Gas</code>的大量消耗，使原合约的逻辑无法正常运行，或者通过恶意操作使合约流程不可恢复。</p>
+<p>先写一个消耗<code>Gas</code>的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function selectNextWinners(uint256 _largestWinner) &#123;</span><br><span class="line">    for(uint256 i = 0; i &lt; largestWinner, i++) &#123; </span><br><span class="line">     // heavy code</span><br><span class="line">    &#125;</span><br><span class="line">    largestWinner = _largestWinner;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们传入一个非常大的数字，由于<code>Gas</code>的限制规则，会阻塞函数的功能，导致<code>largestWinner</code>不会发生变化。</p>
+<p>一个通过恶意操作使合约流程不可恢复的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.10;</span><br><span class="line"></span><br><span class="line">contract PresidentOfCountry &#123;</span><br><span class="line">    address public president;</span><br><span class="line">    uint256 price;</span><br><span class="line"></span><br><span class="line">    function PresidentOfCountry(uint256 _price) &#123;</span><br><span class="line">        require(_price &gt; 0);</span><br><span class="line">        price = _price;</span><br><span class="line">        president = msg.sender;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function becomePresident() payable &#123;</span><br><span class="line">        require(msg.value &gt;= price); // must pay the price to become president</span><br><span class="line">        president.transfer(price);   // we pay the previous president</span><br><span class="line">        president = msg.sender;      // we crown the new president</span><br><span class="line">        price = price * 2;           // we double the price to become president</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个类似<code>KingOfEther</code>的例子。出价高于当前合约的<code>price</code>就能成为新的<code>president</code>，并将合约里原有的存款返还给上一个<code>president</code>。</p>
+<p>如果调用<code>becomePresident()</code>的是外部合约，并且成功获取了<code>president</code>，并且外部合约的<code>fallback()</code>函数主导执行了<code>revert()</code>，那其他用户就无法正常执行<code>becomePresident()</code>，所以当前用户永久的成为了<code>president</code>。</p>
+<h3 id="Bad-Randomness"><a href="#Bad-Randomness" class="headerlink" title="Bad Randomness"></a>Bad Randomness</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The contract had insufficient validation of the block.number age, which resulted in 400 ETH being lost to an unknown player who waited for 256 blocks before revealing the predictable winning number.</span><br><span class="line"></span><br><span class="line">-- Arseny Reutov</span><br></pre></td></tr></table></figure>
+<p>伪随机一直都存在很多安全问题，并且在智能合约中，链上数据公开，就导致了随机数变成伪随机。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">uint256 private seed;</span><br><span class="line">    </span><br><span class="line">function play() public payable &#123;</span><br><span class="line">	   require(msg.value &gt;= 1 ether);</span><br><span class="line">	   iteration++;</span><br><span class="line">	   uint randomNumber = uint(keccak256(seed + iteration));</span><br><span class="line">	   if (randomNumber % 2 == 0) &#123;</span><br><span class="line">		    msg.sender.transfer(this.balance);</span><br><span class="line">	   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然<code>seed</code>被标记为<code>private</code>，但在链上的数据都是相对公开的，同样<code>iteration</code>也可以被获取，所以<code>randomNumber</code>就变的可预测。</p>
+<p>链上的数据都是公开的，所以想要得到一个真正的随机数还是比较难做到。</p>
+<h3 id="Front-Running"><a href="#Front-Running" class="headerlink" title="Front Running"></a>Front Running</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Turns out, all it takes is about 150 lines of Python to get a working front-running algorithm.</span><br><span class="line"></span><br><span class="line">-- Ivan Bogatyy</span><br></pre></td></tr></table></figure>
+<p>提前交易：在用户购买商品之前购买商品。</p>
+<p>在区块链的交易中，所有的交易都需要经过确认才会被写在链上，并且每一笔交易都需要支付一定的手续费。手续费的多少影响了交易被处理的优先级。</p>
+<p>假设工厂需要一车材料，对外招标，工厂一共有5个工人。用户A运输了一车材料到工厂，承诺给每个工人100元。(用户发起交易)随后Hacker得知了消息，也运输了一车材料到工厂，并且在工人搬运用户A的材料之前承诺给每个工人200元。(Hacker更高价格发起同一笔交易)所以工人都去搬运Hacker的材料，(Hacker的优先级高于用户，被优先确认)Hacker与工厂达成了交易，导致用户A的交易落空。</p>
+<p>在以太坊中，所有未被确认的交易都是可被查看的，所以只需要更高价格发起交易就可以获取截获其他人的交易。</p>
+<p>可以在<a href="https://etherscan.io/txsPending" target="_blank" rel="noopener">https://etherscan.io/txsPending</a>查询未被确认的交易。</p>
+<p><img src="/img/DASP/1.png" alt=""></p>
+<h3 id="Time-manipulation"><a href="#Time-manipulation" class="headerlink" title="Time manipulation"></a>Time manipulation</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">If a miner holds a stake on a contract, he could gain an advantage by choosing a suitable timestamp for a block he is mining.</span><br><span class="line"></span><br><span class="line">-- Nicola Atzei, Massimo Bartoletti and Tiziana Cimoli</span><br></pre></td></tr></table></figure>
+<p>时间篡改</p>
+<p>在<code>Solidity</code>中，<code>block.timestamp</code>是和矿工确认交易有关的。如果攻击方作为矿工确认交易的情况下，攻击方可以通过控制<code>block.timestamp</code>来影响依赖于<code>block.timestamp</code>的合约。(<code>block.timestamp</code>等同于<code>now</code>)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function play() public &#123;</span><br><span class="line">    require(now &gt; 1521763200 &amp;&amp; neverPlayed == true);</span><br><span class="line">    neverPlayed = false;</span><br><span class="line">    msg.sender.transfer(1500 ether);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码只接受固定时间的交易。由于矿工可以影响区块的时间戳，他们可以尝试挖掘包含了该合约的区块来设定未来区块的时间戳。只要时间戳足够接近，交易将会被接受，从而攻击者(矿工)获得收益。</p>
+<h3 id="Short-Address-Attack"><a href="#Short-Address-Attack" class="headerlink" title="Short Address Attack"></a>Short Address Attack</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The service preparing the data for token transfers assumed that users will input 20-byte long addresses, but the length of the addresses was not actually checked.</span><br><span class="line"></span><br><span class="line">-- Paweł Bylica</span><br></pre></td></tr></table></figure>
+<p>短地址攻击：由于<code>EVM</code>在处理数据时的<code>参数对齐</code>原则，攻击者可以输入较短的地址，窃取<code>_amount</code>的数位，从而使<code>_amount</code>的数值扩大。</p>
+<p>假如Bob要求Alice转给他20个货币，Bob的地址为：<code>0x3bdde1e9fbaef2579dd63e2abbf0be445ab93f00</code>。</p>
+<p>正常的<code>msg.data</code>为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0xa9059cbb  -&gt; bytes4(keccak256(&quot;transfer(address,uint256)&quot;))</span><br><span class="line">0000000000000000000000003bdde1e9fbaef2579dd63e2abbf0be445ab93f00   --&gt; address </span><br><span class="line">0000000000000000000000000000000000000000000000000000000000000014   --&gt; _amount </span><br><span class="line">(添0补齐32位)</span><br></pre></td></tr></table></figure></p>
+<p>但是Bob将自己地址末尾的<code>00</code>抹去，将<code>0x3bdde1e9fbaef2579dd63e2abbf0be445ab93f</code>告诉了Alice。</p>
+<p>此时的<code>msg.data</code>为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0xa9059cbb  -&gt; bytes4(keccak256(&quot;transfer(address,uint256)&quot;))</span><br><span class="line">0000000000000000000000003bdde1e9fbaef2579dd63e2abbf0be445ab93f     --&gt; address</span><br><span class="line">0000000000000000000000000000000000000000000000000000000000000014   --&gt; _amount</span><br></pre></td></tr></table></figure></p>
+<p>由于<code>EVM</code>的<code>参数对其</code>，将<code>msg.data</code>变为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0xa9059cbb  -&gt; bytes4(keccak256(&quot;transfer(address,uint256)&quot;))</span><br><span class="line">0000000000000000000000003bdde1e9fbaef2579dd63e2abbf0be445ab93f00   --&gt; address </span><br><span class="line">0000000000000000000000000000000000000000000000000000000000001400   --&gt; _amount </span><br><span class="line">(address从_mount中获取两位，并在_mount最后两位补0)</span><br></pre></td></tr></table></figure></p>
+<p>所以，<code>_amount</code>的数目从<code>0x14</code>变成了<code>0x1400</code>，实现了短地址攻击。</p>
+<p>具体攻击过程：(前提是交易所不检查用户输入的地址)</p>
+<ol>
+<li>给自己生成一个末尾为<code>00</code>的账号</li>
+<li>找到一个交易所钱包，转入0x14个货币，同时把自己地址末尾的<code>00</code>去掉</li>
+<li>参考上述的数据变化过程，交易所会认为你存入了0x1400个货币，然后我们就可以取出0x1400个货币。甚至把交易所钱包里面的货币取空。</li>
+</ol>
+<h3 id="Unknown-Unknowns"><a href="#Unknown-Unknowns" class="headerlink" title="Unknown Unknowns"></a>Unknown Unknowns</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">We believe more security audits or more tests would have made no difference. The main problem was that reviewers did not know what to look for.</span><br><span class="line"></span><br><span class="line">-- Christoph Jentzsch</span><br></pre></td></tr></table></figure>
+<h3 id="Unexpected-Ether"><a href="#Unexpected-Ether" class="headerlink" title="Unexpected Ether"></a>Unexpected Ether</h3><p>通常，当以太币发送到合约时，合约会执行<code>fallback()</code>或者合约中其他功能。</p>
+<p>但是会有以太币被强制发送到合约来影响合约代码执行的攻击。</p>
+<p>比如下面这样一个合约：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">contract EtherGame &#123;</span><br><span class="line"></span><br><span class="line">    uint public payoutMileStone1 = 3 ether;</span><br><span class="line">    uint public mileStone1Reward = 2 ether;</span><br><span class="line">    uint public payoutMileStone2 = 5 ether;</span><br><span class="line">    uint public mileStone2Reward = 3 ether; </span><br><span class="line">    uint public finalMileStone = 10 ether; </span><br><span class="line">    uint public finalReward = 5 ether; </span><br><span class="line"></span><br><span class="line">    mapping(address =&gt; uint) redeemableEther;</span><br><span class="line">    // users pay 0.5 ether. At specific milestones, credit their accounts</span><br><span class="line">    function play() public payable &#123;</span><br><span class="line">        require(msg.value == 0.5 ether); // each play is 0.5 ether</span><br><span class="line">        uint currentBalance = this.balance + msg.value;</span><br><span class="line">        // ensure no players after the game as finished</span><br><span class="line">        require(currentBalance &lt;= finalMileStone);</span><br><span class="line">        // if at a milestone credit the players account</span><br><span class="line">        if (currentBalance == payoutMileStone1) &#123;</span><br><span class="line">            redeemableEther[msg.sender] += mileStone1Reward;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (currentBalance == payoutMileStone2) &#123;</span><br><span class="line">            redeemableEther[msg.sender] += mileStone2Reward;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (currentBalance == finalMileStone ) &#123;</span><br><span class="line">            redeemableEther[msg.sender] += finalReward;</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function claimReward() public &#123;</span><br><span class="line">        // ensure the game is complete</span><br><span class="line">        require(this.balance == finalMileStone);</span><br><span class="line">        // ensure there is a reward to give</span><br><span class="line">        require(redeemableEther[msg.sender] &gt; 0); </span><br><span class="line">        redeemableEther[msg.sender] = 0;</span><br><span class="line">        msg.sender.transfer(redeemableEther[msg.sender]);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>玩家将0.5以太币发送给合约，有希望最先完成三个<code>MileStone</code>从而从合约中获得10以太币的奖励。</p>
+<p>如果攻击者使用之前提到的<code>selfdestruct</code>给本合约强制转账0.1以太币，将无法让任何玩家达到<code>MileStone</code>。</p>
+<p>如果攻击者强制发送10以太币甚至更多，合约将始终处于<code>claimReward</code>状态，从而导致合约中所有以太币被锁定。</p>
+<h3 id="Tx-Origin-Authentication"><a href="#Tx-Origin-Authentication" class="headerlink" title="Tx.Origin Authentication"></a>Tx.Origin Authentication</h3><p><code>Solidity</code>有一个全局变量<code>tx.origin</code>，它遍历整个调用堆栈并返回最初调用它的账户地址。所以在智能合约中用此变量进行身份验证很容易受到攻击。</p>
+<p>示例代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">contract Phishable &#123;</span><br><span class="line">    address public owner;</span><br><span class="line"></span><br><span class="line">    constructor (address _owner) &#123;</span><br><span class="line">        owner = _owner; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function () public payable &#123;&#125; // collect ether</span><br><span class="line"></span><br><span class="line">    function withdrawAll(address _recipient) public &#123;</span><br><span class="line">        require(tx.origin == owner);</span><br><span class="line">        _recipient.transfer(this.balance); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该合约使用<code>tx.origin</code>函数进行身份验证.</p>
+<p>如果构造这样一个攻击合约：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import &quot;Phishable.sol&quot;;</span><br><span class="line"></span><br><span class="line">contract AttackContract &#123; </span><br><span class="line"></span><br><span class="line">    Phishable phishableContract; </span><br><span class="line">    address attacker; // The attackers address to receive funds.</span><br><span class="line"></span><br><span class="line">    constructor (Phishable _phishableContract, address _attackerAddress) &#123; </span><br><span class="line">        phishableContract = _phishableContract; </span><br><span class="line">        attacker = _attackerAddress;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function () &#123; </span><br><span class="line">        phishableContract.withdrawAll(attacker); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果<code>Phishable</code>合约向攻击合约发送了以太币，就会发生<code>Phishable</code>合约中<code>owner</code>的转移。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://www.dasp.co/#item-10" target="_blank" rel="noopener">DASP Top 10</a></p>
+<p><a href="http://rickgray.me/2018/05/17/ethereum-smart-contracts-vulnerabilites-review/" target="_blank" rel="noopener">以太坊智能合约安全入门了解一下(上)</a></p>
+<p><a href="http://rickgray.me/2018/05/26/ethereum-smart-contracts-vulnerabilities-review-part2/" target="_blank" rel="noopener">以太坊智能合约安全入门了解一下(下)</a></p>
+<p><a href="https://blog.sigmaprime.io/solidity-security.html" target="_blank" rel="noopener">sigmaprime‘s blog</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/425570952.mp3">
+            </audio>
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='true'
+        data-ci='e7847793edc18168dff5'
+        data-cs='078de908e1f09190c392385b45dd854deb7f84ee'
+        data-r='gitalk'
+        data-o='zh-Processor'
+        data-a='zh-Processor'
+        data-d='true'
+    >查看评论</div>
+
+
+    </div>
+    
+      <div class='side'>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#以太坊智能合约DASP-Top-10-分析"><span class="toc-number">1.</span> <span class="toc-text">以太坊智能合约DASP Top 10 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#几个重要概念"><span class="toc-number">1.1.</span> <span class="toc-text">几个重要概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#回调函数—-fallback"><span class="toc-number">1.1.1.</span> <span class="toc-text">回调函数—-fallback()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三种交易的方式"><span class="toc-number">1.1.2.</span> <span class="toc-text">三种交易的方式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#transfer"><span class="toc-number">1.1.2.0.1.</span> <span class="toc-text">transfer()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#send"><span class="toc-number">1.1.2.0.2.</span> <span class="toc-text">send()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#call-value"><span class="toc-number">1.1.2.0.3.</span> <span class="toc-text">call.value()</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gas"><span class="toc-number">1.1.3.</span> <span class="toc-text">Gas</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#selfdestruct"><span class="toc-number">1.1.4.</span> <span class="toc-text">selfdestruct</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Reentrancy"><span class="toc-number">1.2.1.</span> <span class="toc-text">Reentrancy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Access-Control"><span class="toc-number">1.2.2.</span> <span class="toc-text">Access Control</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Arithmetic-Issues"><span class="toc-number">1.2.3.</span> <span class="toc-text">Arithmetic Issues</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unchecked-Return-Values-For-Low-Level-Calls"><span class="toc-number">1.2.4.</span> <span class="toc-text">Unchecked Return Values For Low Level Calls</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Denial-of-Service"><span class="toc-number">1.2.5.</span> <span class="toc-text">Denial of Service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bad-Randomness"><span class="toc-number">1.2.6.</span> <span class="toc-text">Bad Randomness</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Front-Running"><span class="toc-number">1.2.7.</span> <span class="toc-text">Front Running</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Time-manipulation"><span class="toc-number">1.2.8.</span> <span class="toc-text">Time manipulation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Short-Address-Attack"><span class="toc-number">1.2.9.</span> <span class="toc-text">Short Address Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unknown-Unknowns"><span class="toc-number">1.2.10.</span> <span class="toc-text">Unknown Unknowns</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unexpected-Ether"><span class="toc-number">1.2.11.</span> <span class="toc-text">Unexpected Ether</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tx-Origin-Authentication"><span class="toc-number">1.2.12.</span> <span class="toc-text">Tx.Origin Authentication</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">1.3.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
+      </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-107527850-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
